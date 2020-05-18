@@ -1,0 +1,71 @@
+#!/bin/sh
+
+# Copyright (c) 2019 Sorint.lab S.p.A.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+HOSTNAME=$(hostname)
+KERNEL=$(uname -r)
+
+OS=$(uname -s)
+CPU_MODEL=$(kstat cpu_info | grep "brand" | cut -c34- | head -n 1)
+CPU_SPEED=$(psrinfo -pv |  grep clock | sed 's/.* clock \([0-9]*\).*/\1/')
+SWP_TOTAL=$(($(swap -s | sed -e 's/.* used, \(.*\)k available/\1/') / 1024 / 1024))
+MEM_TOTAL=$(($(prtconf | grep "Memory" | sed -e 's/Memory size: \(.*\) Megabytes/\1/') / 1024))
+CPU_THREAD=$(nproc --all)
+if [ "$CPU_THREAD" = '1' ]; then
+  CPU_CORES=1
+else 
+  CPU_CORES=$(($CPU_THREAD / 2))
+fi
+SOCKET=$(psrinfo -p)
+
+CHECK_SUN_CLUSTER=$(ps -ef | grep -v grep | grep rpc.pmfd|wc -l)
+if [ "$CHECK_SUN_CLUSTER" = 1 ]; then
+  SUN_CLUSTER=Y
+else
+  SUN_CLUSTER=N
+fi
+
+CHECK_VERITAS_CLUSTER=$(ps -ef | grep -v grep | grep had|wc -l)
+if [ "$CHECK_VERITAS_CLUSTER" = 1 ]; then
+  VERITAS_CLUSTER=Y
+else
+  VERITAS_CLUSTER=N
+fi
+
+CHECK_ORACLE_CLUSTER=$(ps -ef | grep -v grep | grep crsd|wc -l)
+if [ "$CHECK_ORACLE_CLUSTER" -gt 0 ]; then
+  ORACLE_CLUSTER=Y
+else
+  ORACLE_CLUSTER=N
+fi
+
+TYPE=PH
+VIRTUAL=N
+
+echo "hostname: $HOSTNAME
+cpumodel: $CPU_MODEL @ $CPU_SPEED MHz
+cputhreads: $CPU_THREAD
+cpucores: $CPU_CORES
+socket: $SOCKET
+type: $TYPE
+virtual: $VIRTUAL
+kernel: $KERNEL
+os: $OS
+memorytotal: $MEM_TOTAL
+swaptotal: $SWP_TOTAL
+oraclecluster: $ORACLE_CLUSTER
+veritascluster: $VERITAS_CLUSTER
+suncluster: $SUN_CLUSTER" 
