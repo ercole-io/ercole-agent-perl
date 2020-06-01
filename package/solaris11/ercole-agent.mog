@@ -1,0 +1,4 @@
+set name=pkg.fmri value=ercole-agent@2.0
+set name=pkg.summary value="Agent for the ercole project"
+set name=pkg.description value="Agent for the ercole project"
+set name=info.classification value=org.opensolaris.category.2008:System/Services
