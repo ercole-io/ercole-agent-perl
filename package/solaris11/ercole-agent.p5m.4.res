@@ -6,14 +6,14 @@ set name=org.opensolaris.smf.fmri value=svc:/ercole-agent \
     value=svc:/ercole-agent:default
 dir  path=lib owner=root group=bin mode=0755
 dir  path=lib/svc owner=root group=bin mode=0755
-dir  path=lib/svc/manifest owner=root group=bin mode=0755
-dir  path=lib/svc/manifest/site owner=root group=bin mode=0755
+dir  path=lib/svc/manifest owner=root group=sys mode=0755
+dir  path=lib/svc/manifest/site owner=root group=sys mode=0755
 file ercole-agent.xml path=lib/svc/manifest/site/ercole-agent.xml owner=root \
     group=bin mode=0644 restart_fmri=svc:/system/manifest-import:default
 dir  path=lib/svc/method owner=root group=bin mode=0755
 file ercole-agent-start path=lib/svc/method/ercole-agent-start owner=root \
     group=bin mode=0755
-dir  path=opt owner=root group=bin mode=0755
+dir  path=opt owner=root group=sys mode=0755
 dir  path=opt/ercole-agent owner=root group=bin mode=0755
 file ../../LICENSE path=opt/ercole-agent/LICENSE owner=root group=bin mode=0644
 dir  path=opt/ercole-agent/config owner=root group=bin mode=0755
@@ -37,8 +37,6 @@ file ../../fetch/dbmounted path=opt/ercole-agent/fetch/dbmounted owner=root \
 file ../../fetch/dbstatus path=opt/ercole-agent/fetch/dbstatus owner=root \
     group=bin mode=0755
 file ../../fetch/dbversion path=opt/ercole-agent/fetch/dbversion owner=root \
-    group=bin mode=0755
-file ../../fetch/feature path=opt/ercole-agent/fetch/feature owner=root \
     group=bin mode=0755
 file ../../fetch/filesystem path=opt/ercole-agent/fetch/filesystem owner=root \
     group=bin mode=0755
@@ -516,8 +514,6 @@ file ../../marshal/common.pm path=opt/ercole-agent/marshal/common.pm \
     owner=root group=bin mode=0644
 file ../../marshal/database.pm path=opt/ercole-agent/marshal/database.pm \
     owner=root group=bin mode=0644
-file ../../marshal/features.pm path=opt/ercole-agent/marshal/features.pm \
-    owner=root group=bin mode=0644
 file ../../marshal/features2.pm path=opt/ercole-agent/marshal/features2.pm \
     owner=root group=bin mode=0644
 file ../../marshal/filesystems.pm path=opt/ercole-agent/marshal/filesystems.pm \
@@ -556,10 +552,6 @@ file ../../sql/dbone.sql path=opt/ercole-agent/sql/dbone.sql owner=root \
 file ../../sql/dbstatus.sql path=opt/ercole-agent/sql/dbstatus.sql owner=root \
     group=bin mode=0644
 file ../../sql/edition.sql path=opt/ercole-agent/sql/edition.sql owner=root \
-    group=bin mode=0644
-file ../../sql/feature-10.sql path=opt/ercole-agent/sql/feature-10.sql \
-    owner=root group=bin mode=0644
-file ../../sql/feature.sql path=opt/ercole-agent/sql/feature.sql owner=root \
     group=bin mode=0644
 file ../../sql/license-10.sql path=opt/ercole-agent/sql/license-10.sql \
     owner=root group=bin mode=0644

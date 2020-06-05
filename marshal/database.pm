@@ -92,7 +92,7 @@ sub Database {
         $db{'Patches'}=[];
         $db{'Tablespaces'}=[];
         $db{'Schemas'}=[];
-        $db{'Features'}=[];
+        $db{'Features2'}=[];
         $db{'Licenses'}=[];
         $db{'ADDMs'}=[];
         $db{'SegmentAdvisors'}=[];

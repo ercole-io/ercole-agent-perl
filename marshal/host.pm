@@ -53,12 +53,14 @@ sub Host {
             $key = "VeritasCluster";
         } elsif ($key eq "Suncluster"){
             $key = "SunCluster";
+        } elsif ($key eq "Aixcluster"){
+            $key = "AixCluster";
         } 
         $value=trim($value);
 
         if ($key eq "CPUCores" || $key eq "CPUThreads" || $key eq "Socket" || $key eq "MemoryTotal" || $key eq "SwapTotal"){
             $value = parseInt($value);
-        } elsif ($key eq "OracleCluster" || $key eq "VeritasCluster" || $key eq "SunCluster" || $key eq "Virtual"){
+        } elsif ($key eq "OracleCluster" || $key eq "VeritasCluster" || $key eq "SunCluster" || $key eq "AixCluster" || $key eq "Virtual"){
             $value = parseBool($value);
         }
 
