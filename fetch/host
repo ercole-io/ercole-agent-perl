@@ -52,6 +52,8 @@ else
   ORACLE_CLUSTER=N
 fi
 
+ AIX_CLUSTER=N
+
 TYPE=PH
 VIRTUAL=N
 
@@ -68,4 +70,5 @@ memorytotal: $MEM_TOTAL
 swaptotal: $SWP_TOTAL
 oraclecluster: $ORACLE_CLUSTER
 veritascluster: $VERITAS_CLUSTER
-suncluster: $SUN_CLUSTER" 
+suncluster: $SUN_CLUSTER
+aixcluster: $AIX_CLUSTER" 

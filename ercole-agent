@@ -36,7 +36,6 @@ use oratab;
 use database;
 use tablespaces;
 use schemas;
-use features;
 use features2;
 use licenses;
 use patches;
@@ -103,17 +102,6 @@ sub buildData { #OK
 
 			$out = fetcher("patch", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"}); #empty, OK
 			$database{'Patches'} = marshal::Patches($out); #OK
-
-			$out = fetcher("feature", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"});
-			if ($out =~ m/deadlocked on readable physical standby/) {
-				marshal::logPrintln("Detected bug active dataguard 2311894.1!");
-				$database{'Features'}=();
-			} elsif ($out =~ m/ORA-01555: snapshot too old: rollback segment number/) {
-				marshal::logPrintln("Detected error on active dataguard ORA-01555!");
-				$database{'Features'}=();
-			} else {
-				$database{'Features'} = marshal::Features($out); #OK 
-			}
 
 			$out = fetcher("opt", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"});
 			$database{'Features2'} = marshal::Features2($out); #OK 
