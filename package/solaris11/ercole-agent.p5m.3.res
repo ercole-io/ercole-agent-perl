@@ -514,7 +514,7 @@ file ../../marshal/common.pm path=opt/ercole-agent/marshal/common.pm \
     owner=root group=bin mode=0644
 file ../../marshal/database.pm path=opt/ercole-agent/marshal/database.pm \
     owner=root group=bin mode=0644
-file ../../marshal/features2.pm path=opt/ercole-agent/marshal/features2.pm \
+file ../../marshal/feature_usage_stats.pm path=opt/ercole-agent/marshal/feature_usage_stats.pm \
     owner=root group=bin mode=0644
 file ../../marshal/filesystems.pm path=opt/ercole-agent/marshal/filesystems.pm \
     owner=root group=bin mode=0644

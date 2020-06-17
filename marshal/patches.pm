@@ -22,6 +22,8 @@ use warnings;
 use diagnostics;
 use lib "./marshal";
 use common;
+use Time::Piece;
+
 
 sub Patches {
     no warnings 'uninitialized';
@@ -31,14 +33,12 @@ sub Patches {
     for my $c (split /\n/, $cmdOutput) {
         my %patch;
         my $line = $c;
-        my (undef, undef, undef, $database, $version, $patchID, $action, $description, $date) = split /\|\|\|/, $line;
-        $database=trim($database);
+        my (undef, undef, undef, undef, $version, $patchID, $action, $description, $date) = split /\|\|\|/, $line;
         $version=trim($version);
-        $patchID=trim($patchID);
+        $patchID=parseInt(trim($patchID));
         $action=trim($action);
         $description=trim($description);
-        $date=trim($date);
-        $patch{'Database'} = $database;
+        $date=Time::Piece->strptime(trim($date), "%d-%b-%Y")->strftime("%F");
         $patch{'Version'} = $version;
         $patch{'PatchID'} = $patchID;
         $patch{'Action'} = $action;

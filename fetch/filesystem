@@ -17,8 +17,8 @@
 TMPFILE1=$(mktemp)
 TMPFILE2=$(mktemp)
 df -n | tr ':' ' ' |sort -k1 > "$TMPFILE1"
-df -Ph | sed 1d | sort -k6 > "$TMPFILE2"
-paste "$TMPFILE1" "$TMPFILE2" | awk ' { $1=""; t = $2; $2 = $3; $3 = t; print; } ' 
+df -Pk | sed 1d | sort -k6 > "$TMPFILE2"
+paste "$TMPFILE1" "$TMPFILE2" | awk ' { $1=""; t = $2; $2 = $3; $3 = t; $4 = $4*1024; $5 = $5*1024; $6 = $6*1024; print; } ' 
 rm "$TMPFILE1"
 rm "$TMPFILE2"
 

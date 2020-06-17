@@ -99,6 +99,25 @@ sub parseInt {
     return $s + 0;
 }
 
+sub parseNumber {
+    my $s = shift;
+
+    return $s + 0.0;
+}
+
+sub parseNullableNumber {
+    my $s = shift;
+
+    my $null;
+    if ($s eq "") {
+		return $null;
+	} elsif ($s eq "N/A") {
+        return $null;
+    } else {
+        return $s + 0.0;
+    }
+}
+
 
 #s is supposed to be non null and already trimmed
 sub parseCount { #to improve

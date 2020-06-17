@@ -41,27 +41,48 @@ sub Host {
             $key = "CPUCores";
         } elsif ($key eq "Cputhreads"){
             $key = "CPUThreads";
+        } elsif ($key eq "Cpufrequency"){
+            $key = "CPUFrequency";
+        } elsif ($key eq "Cpusockets"){
+            $key = "CPUSockets";
+        } elsif ($key eq "Threadspercore"){
+            $key = "ThreadsPerCore";
+        } elsif ($key eq "Corespersocket"){
+            $key = "CoresPerSocket";
         } elsif ($key eq "Os"){
             $key = "OS";
+        } elsif ($key eq "Osversion"){
+            $key = "OSVersion";
+        } elsif ($key eq "Kernelversion"){
+            $key = "KernelVersion";
         } elsif ($key eq "Memorytotal"){
             $key = "MemoryTotal";
         } elsif ($key eq "Swaptotal"){
             $key = "SwapTotal";
         } elsif ($key eq "Oraclecluster"){
-            $key = "OracleCluster";
+            next;
         } elsif ($key eq "Veritascluster"){
-            $key = "VeritasCluster";
+            next;
         } elsif ($key eq "Suncluster"){
-            $key = "SunCluster";
+            next;
         } elsif ($key eq "Aixcluster"){
-            $key = "AixCluster";
+            next;
+        } elsif ($key eq "Virtual"){
+            $key = "HardwareAbstraction";
+        } elsif ($key eq "Type"){
+            $key = "HardwareAbstractionTechnology";
         } 
         $value=trim($value);
 
-        if ($key eq "CPUCores" || $key eq "CPUThreads" || $key eq "Socket" || $key eq "MemoryTotal" || $key eq "SwapTotal"){
+        if ($key eq "CPUCores" || $key eq "CPUThreads" || $key eq "CPUSockets" || $key eq "MemoryTotal" || $key eq "SwapTotal" || $key eq "ThreadsPerCore" || $key eq "CoresPerSocket" ){
             $value = parseInt($value);
-        } elsif ($key eq "OracleCluster" || $key eq "VeritasCluster" || $key eq "SunCluster" || $key eq "AixCluster" || $key eq "Virtual"){
+        } elsif ($key eq "HardwareAbstraction") {
             $value = parseBool($value);
+            if ($value eq parseBool("Y")) {
+                $value = "VIRT";
+            } else {
+                $value = "PH";
+            }
         }
 
         $host{$key} = $value;

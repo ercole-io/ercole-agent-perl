@@ -31,34 +31,43 @@ sub Database {
     for my $c (split /\n/, $cmdOutput) {
         my %patch;
         my $line = $c;
+    
         my ($name, $uniqueName, $instanceNumber, $status, $version, 
             $platform, $archiveLog, $charset, $ncharset, $blockSize, 
             $cpuCount, $sgaTarget, $pgaTarget, $memoryTaget, $sgaMaxSize, 
-            $segmentsSize, $used, $allocated, $elapsed, $dbtime, $dailycpuusage, $work, $asm, $dataguard) = split /\|\|\|/, $line;
+            $segmentsSize, $datafileSize, $allocated, $elapsed, $dbtime, $dailycpuusage, $work, $asm, $dataguard) = split /\|\|\|/, $line;
         $name=trim($name);
         $uniqueName=trim($uniqueName);
-        $instanceNumber=trim($instanceNumber);
+        $instanceNumber=parseInt(trim($instanceNumber));
         $status=trim($status);
         $version=trim($version);
         $platform=trim($platform);
         $archiveLog=trim($archiveLog);
         $charset=trim($charset);
         $ncharset=trim($ncharset);
-        $blockSize=trim($blockSize);
-        $cpuCount=trim($cpuCount);
-        $sgaTarget=trim($sgaTarget);
-        $pgaTarget=trim($pgaTarget);
-        $memoryTaget=trim($memoryTaget);
-        $sgaMaxSize=trim($sgaMaxSize);
-        $segmentsSize=trim($segmentsSize);
-        $used=trim($used);
-        $allocated=trim($allocated);
-        $elapsed=trim($elapsed);
-        $dailycpuusage=trim($dailycpuusage);
-        $dbtime=trim($dbtime);
-        $work=trim($work);
-        $asm=trim($asm);
-        $dataguard=trim($dataguard);
+        $blockSize=parseInt(trim($blockSize));
+        $cpuCount=parseInt(trim($cpuCount));
+        $sgaTarget=parseNumber(trim($sgaTarget));
+        $pgaTarget=parseNumber(trim($pgaTarget));
+        $memoryTaget=parseNumber(trim($memoryTaget));
+        $sgaMaxSize=parseNumber(trim($sgaMaxSize));
+        $segmentsSize=parseNumber(trim($segmentsSize));
+        $datafileSize=parseNumber(trim($datafileSize));
+        $allocated=parseNumber(trim($allocated));
+        $elapsed=parseNullableNumber(trim($elapsed));
+        $dailycpuusage=parseNullableNumber(trim($dailycpuusage));
+        $dbtime=parseNullableNumber(trim($dbtime));
+        $work=parseNullableNumber(trim($work));
+        $asm=parseBool(trim($asm));
+        $dataguard=parseBool(trim($dataguard));
+
+        if ($archiveLog eq "ARCHIVELOG"){
+            $archiveLog=parseBool("Y");
+        } elsif ($archiveLog eq "NOARCHIVELOG"){
+            $archiveLog=parseBool("N");
+        } else {
+             die "archivelog value should be ARCHIVELOG or NOARCHIVELOG";
+        }
 
         $db{'Name'} = $name;
         $db{'UniqueName'} = $uniqueName;
@@ -76,7 +85,7 @@ sub Database {
         $db{'MemoryTarget'} = $memoryTaget;
         $db{'SGAMaxSize'} = $sgaMaxSize;
         $db{'SegmentsSize'} = $segmentsSize;
-        $db{'Used'} = $used;
+        $db{'DatafileSize'} = $datafileSize;
         $db{'Allocated'} = $allocated;
         $db{'Elapsed'} = $elapsed;
         $db{'DBTime'} = $dbtime;
@@ -92,12 +101,13 @@ sub Database {
         $db{'Patches'}=[];
         $db{'Tablespaces'}=[];
         $db{'Schemas'}=[];
-        $db{'Features2'}=[];
+        $db{'Features'}=[];
         $db{'Licenses'}=[];
         $db{'ADDMs'}=[];
         $db{'SegmentAdvisors'}=[];
-        $db{'LastPSUs'}=[];
+        $db{'PSUs'}=[];
         $db{'Backups'}=[];
+        $db{'FeatureUsageStats'}=[];
     }
 
     return %db;

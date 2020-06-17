@@ -35,14 +35,14 @@ sub SegmentAdvisor {
     for my $c (split /\n/, $cmdOutput) {
         my %segmentAdvisor;
         my $line = $c;
-        my ($hostname, $dbname, $segmentOwner, $segmentName, $segmentType, $partitionName, $reclaimable, $recommendation) = split /\|\|\|/, $line;
+        my (undef, undef, $segmentOwner, $segmentName, $segmentType, $partitionName, $reclaimable, $recommendation) = split /\|\|\|/, $line;
 
         if ($count > 2) {
             $segmentOwner=trim($segmentOwner);
             $segmentName=trim($segmentName);
             $segmentType=trim($segmentType);
             $partitionName=trim($partitionName);
-            $reclaimable=trim($reclaimable);
+            $reclaimable=parseNumber(trim($reclaimable));
             $recommendation=trim($recommendation);
             $segmentAdvisor{'SegmentOwner'} = $segmentOwner;
             $segmentAdvisor{'SegmentName'} = $segmentName;
