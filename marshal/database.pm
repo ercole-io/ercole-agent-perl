@@ -73,6 +73,7 @@ sub Database {
         $db{'UniqueName'} = $uniqueName;
         $db{'InstanceNumber'} = $instanceNumber;
         $db{'Status'} = $status;
+        $db{'IsCDB'} = parseBool("FALSE");
         $db{'Version'} = $version;
         $db{'Platform'} = $platform;
         $db{'Archivelog'} = $archiveLog;
@@ -101,13 +102,14 @@ sub Database {
         $db{'Patches'}=[];
         $db{'Tablespaces'}=[];
         $db{'Schemas'}=[];
-        $db{'Features'}=[];
         $db{'Licenses'}=[];
         $db{'ADDMs'}=[];
         $db{'SegmentAdvisors'}=[];
         $db{'PSUs'}=[];
         $db{'Backups'}=[];
         $db{'FeatureUsageStats'}=[];
+        $db{'PDBs'}=[];
+        $db{'Services'}=[];
     }
 
     return %db;

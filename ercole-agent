@@ -104,7 +104,7 @@ sub buildData { #OK
 			$out = fetcher("opt", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"});
 			$database{'FeatureUsageStats'} = marshal::FeatureUsageStats($out); #OK 
 
-			$out = fetcher("license",$dbEntry{"DBName"}, $dbVersion, $info{'Type'}, $dbEntry{"OracleHome"});
+			$out = fetcher("license",$dbEntry{"DBName"}, $dbVersion, $info{'HardwareAbstractionTechnology'}, $dbEntry{"OracleHome"});
 			$database{'Licenses'} = marshal::Licenses($out); #OK
 			
 			$out = fetcher("addm", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
@@ -119,7 +119,7 @@ sub buildData { #OK
 			$database{'SegmentAdvisors'} = marshal::SegmentAdvisor($out); #OK 
 
 			$out = fetcher("psu", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"});
-			$database{'LastPSUs'} = marshal::PSU($out); #OK 
+			$database{'PSUs'} = marshal::PSU($out); #OK 
 
 			$out = fetcher("backup", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
 			if ($out =~ m/unable to extend temp segment/) {
@@ -162,8 +162,6 @@ sub buildData { #OK
 	$hostData{'ClusterMembershipStatus'} = \%clusterMembershipStatus;
 	$hostData{'Features'} = \%features;
 	$hostData{'Filesystems'} = \@filesystems;
-
-	$hostData{'HostType'} = $configuration{'hosttype'};
 
 	sendData(\%hostData, \%configuration);
 }
