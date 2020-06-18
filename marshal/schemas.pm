@@ -32,19 +32,17 @@ sub Schemas {
     for my $c (split /\n/, $cmdOutput) {
         my %schema;
         my $line = $c;
-        my (undef, undef, $database, $user, $total, $tables, $indexes, $lob) = split /\|\|\|/, $line;
-        $database=trim($database);
+        my (undef, undef, undef, $user, $total, $tables, $indexes, $lob) = split /\|\|\|/, $line;
         $user=trim($user);
-        $total=trim($total);
-        $tables=trim($tables);
-        $indexes=trim($indexes);
-        $lob=trim($lob);
-        $schema{'Database'} = $database;
+        $total=parseInt(trim($total));
+        $tables=parseInt(trim($tables));
+        $indexes=parseInt(trim($indexes));
+        $lob=parseInt(trim($lob));
         $schema{'User'} = $user;
-        $schema{'Total'} = parseInt($total);
-        $schema{'Tables'} = parseInt($tables);
-        $schema{'Indexes'} = parseInt($indexes);
-        $schema{'LOB'} = parseInt($lob);
+        $schema{'Total'} = $total;
+        $schema{'Tables'} = $tables;
+        $schema{'Indexes'} = $indexes;
+        $schema{'LOB'} = $lob;
 
         push(@schemas, {%schema});
     }

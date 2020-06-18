@@ -70,9 +70,6 @@ sub ReadConfig{
     if (not($config{"oratab"})){
         $config{"oratab"} = "/etc/oratab";
     }
-    if (not($config{"hosttype"})){
-        $config{"hosttype"} = "oracledb";
-    }
 
     return %config;
 }

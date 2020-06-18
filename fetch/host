@@ -16,9 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 HOSTNAME=$(hostname)
-KERNEL=$(uname -r)
+KERNEL=$(uname -s)
+KERNEL_VERSION=$(uname -r)
 
-OS=$(uname -s)
+OS=$(uname -o)
+OS_VERSION=$(uname -v)
 CPU_MODEL=$(kstat cpu_info | grep "brand" | cut -c34- | head -n 1)
 CPU_SPEED=$(/usr/sbin/psrinfo -pv |  grep clock | sed 's/.* clock \([0-9]*\).*/\1/' | head -n 1)
 SWP_TOTAL=$(top -d1 | grep -i "total swap" | cut -d',' -f3 | cut -d' ' -f2 | sed 's/[^0-9]*//g')
@@ -26,10 +28,19 @@ MEM_TOTAL=$(($(/usr/sbin/prtconf | grep "Memory" | sed -e 's/Memory size: \(.*\)
 CPU_THREAD=$(nproc --all)
 if [ "$CPU_THREAD" = '1' ]; then
   CPU_CORES=1
+  THREADS_PER_CORE=1  
 else 
   CPU_CORES=$(($CPU_THREAD / 2))
+  THREADS_PER_CORE=2
 fi
+
 SOCKET=$(/usr/sbin/psrinfo -p)
+
+if [ "$SOCKET" -gt "$CPU_CORES" ]; then
+  CORES_PER_SOCKET=1 
+else 
+  CORES_PER_SOCKET= $(($CPU_CORES / $SOCKET))
+fi
 
 CHECK_SUN_CLUSTER=$(ps -ef | grep -v grep | grep rpc.pmfd|wc -l)
 if [ "$CHECK_SUN_CLUSTER" = 1 ]; then
@@ -61,11 +72,16 @@ echo "hostname: $HOSTNAME
 cpumodel: $CPU_MODEL @ $CPU_SPEED MHz
 cputhreads: $CPU_THREAD
 cpucores: $CPU_CORES
-socket: $SOCKET
+cpufrequency: $CPU_SPEED MHz
+cpusockets: $SOCKET
+threadspercore: $THREADS_PER_CORE
+corespersocket: $CORES_PER_SOCKET
 type: $TYPE
 virtual: $VIRTUAL
 kernel: $KERNEL
+kernelversion: $KERNEL_VERSION
 os: $OS
+osversion: $OS_VERSION
 memorytotal: $MEM_TOTAL
 swaptotal: $SWP_TOTAL
 oraclecluster: $ORACLE_CLUSTER

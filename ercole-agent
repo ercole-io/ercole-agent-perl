@@ -31,12 +31,13 @@ use config;
 use lib "./marshal";
 use common;
 use host;
+use cluster_membership_status;
 use filesystems;
 use oratab;
 use database;
 use tablespaces;
 use schemas;
-use features2;
+use feature_usage_stats;
 use licenses;
 use patches;
 use addms;
@@ -48,7 +49,7 @@ use MIME::Base64;
 use common;
  
 my $version = "latest";
-my $hostDataSchemaVersion = 4;
+my $hostDataSchemaVersion = 1;
 
 
 sub main {
@@ -64,10 +65,8 @@ sub main {
 sub buildData { #OK
     my %configuration = @_;
     my $out = fetcher("host", "", "X"); #ok
-    my %host = marshal::Host($out); #ok
-        
-    $host{'Environment'} = $configuration{'envtype'};
-    $host{'Location'} = $configuration{'location'};
+    my %info = marshal::Host($out); #ok
+    my %clusterMembershipStatus = marshal::ClusterMembershipStatus($out); #ok
 
     $out = fetcher("filesystem", "", "X"); #ok
     my @filesystems = marshal::Filesystems($out); #array of hashes' address, ok
@@ -86,12 +85,11 @@ sub buildData { #OK
 			my $outVersion = fetcher("dbversion", $dbEntry{"DBName"}, $dbEntry{"OracleHome"}); #$db=XE, #outVersion 18.0.0.0
         	my ($dbVersion) = split /\./, $outVersion;
 		
-			#DA RIMETTERE ALLA FINE
-			# if ($configuration{'forcestats'}) { #true, ok
-			# 	fetcher("stats", $db, $dbVersion); #Update db stats
-			# }
+			if ($configuration{'forcestats'}) { #true, ok
+				fetcher("stats", $dbEntry{"DBName"}, $dbEntry{"OracleHome"}); #Update db stats
+			}
 
-			$out = fetcher("db", $dbEntry{"DBName"}, $dbEntry{"OracleHome"}, $configuration{'AWR'}); 
+			$out = fetcher("db", $dbEntry{"DBName"}, $dbEntry{"OracleHome"}, $configuration{'AWR'});
 			my %database = marshal::Database($out); #OK 
 
 			$out = fetcher("tablespace", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
@@ -104,10 +102,9 @@ sub buildData { #OK
 			$database{'Patches'} = marshal::Patches($out); #OK
 
 			$out = fetcher("opt", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"});
-			$database{'Features2'} = marshal::Features2($out); #OK 
+			$database{'FeatureUsageStats'} = marshal::FeatureUsageStats($out); #OK 
 
-
-			$out = fetcher("license",$dbEntry{"DBName"}, $dbVersion, $host{'Type'}, $dbEntry{"OracleHome"});
+			$out = fetcher("license",$dbEntry{"DBName"}, $dbVersion, $info{'HardwareAbstractionTechnology'}, $dbEntry{"OracleHome"});
 			$database{'Licenses'} = marshal::Licenses($out); #OK
 			
 			$out = fetcher("addm", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
@@ -122,7 +119,7 @@ sub buildData { #OK
 			$database{'SegmentAdvisors'} = marshal::SegmentAdvisor($out); #OK 
 
 			$out = fetcher("psu", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"});
-			$database{'LastPSUs'} = marshal::PSU($out); #OK 
+			$database{'PSUs'} = marshal::PSU($out); #OK 
 
 			$out = fetcher("backup", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
 			if ($out =~ m/unable to extend temp segment/) {
@@ -143,52 +140,30 @@ sub buildData { #OK
 
 	my %hostData;
 	
-	my %extraInfo;
-	$extraInfo{'Filesystems'} = \@filesystems;
-	$extraInfo{'Databases'} = \@databases;
+	my %db;
+	$db{"Databases"} = \@databases;
+	my %oracle;
+	$oracle{"Database"} = \%db;
 
-	$hostData{'Extra'} = \%extraInfo;
-	$hostData{'Info'} = \%host;
-	$hostData{'Hostname'} = $host{'Hostname'};
-	
+	my %features;
+	$features{'Oracle'} = \%oracle;
+
+	$hostData{'Hostname'} = $info{'Hostname'};
 	#override host name with the one in config if != default
 	if ($configuration{'hostname'} ne "default") {
 		$hostData{'Hostname'} = $configuration{'hostname'};
 	}
-
+	$hostData{'Location'} = $configuration{'location'};	
 	$hostData{'Environment'} = $configuration{'envtype'};
-	$hostData{'Location'} = $configuration{'location'};
-	$hostData{'HostType'} = $configuration{'hosttype'};
-	$hostData{'Version'} = $version;
-	$hostData{'HostDataSchemaVersion'} = $hostDataSchemaVersion;
-
-	#Fill index fields
-	my $hdDatabases = "";
-	my $hdSchemas = "";
-	
-	foreach my $i (@databases){
-		no warnings 'uninitialized';
-		my %db = %$i;
-
-		$hdDatabases = $hdDatabases . $db{'Name'} . " ";
-		
-		my $temp = $db{'Schemas'};
-		my @schemas = @$temp;
-
-		foreach my $j (@schemas) {
-			my %schema = %$j;
-			$hdSchemas = $hdSchemas . $schema{'User'} . " ";
-		}
-	}
-
-	$hdDatabases = marshal::trim($hdDatabases);
-	$hostData{'Databases'} = $hdDatabases;
-
-	$hdSchemas = marshal::trim($hdSchemas);
-	$hostData{'Schemas'} = $hdSchemas;
+	$hostData{'Tags'}=[];
+	$hostData{'AgentVersion'} = $version;
+	$hostData{'SchemaVersion'} = $hostDataSchemaVersion;
+	$hostData{'Info'} = \%info;
+	$hostData{'ClusterMembershipStatus'} = \%clusterMembershipStatus;
+	$hostData{'Features'} = \%features;
+	$hostData{'Filesystems'} = \@filesystems;
 
 	sendData(\%hostData, \%configuration);
-
 }
 
 sub sendData { #to test if success

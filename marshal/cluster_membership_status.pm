@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (c) 2019 Sorint.lab S.p.A.
+# Copyright (c) 2020 Sorint.lab S.p.A.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,30 +23,31 @@ use diagnostics;
 use lib "./marshal";
 use common;
 
-# Addms returns a Addms hash from the output of the Addms
-# fetcher command. Host fields output is in CSV format separated by '|||'
-sub Addms {
+#ClusterMembershipStatus returns a ClusterMembershipStatus struct from the output of the host
+#fetcher command. Host fields output is in key: value format separated by a newline
+sub ClusterMembershipStatus {
     no warnings 'uninitialized';
     my $cmdOutput = shift;
-    my @addms;
+    my %cms;
 
     for my $c (split /\n/, $cmdOutput) {
-        my %addm;
         my $line = $c;
-        my (undef, undef, $finding, $recommendation, $action, $benefit) = split /\|\|\|/, $line;
-        $finding=trim($finding);
-        $recommendation=trim($recommendation);
-        $action=trim($action);
-        $benefit=parseNumber(trim($benefit));
-        $addm{'Finding'} = $finding;
-        $addm{'Recommendation'} = $recommendation;
-        $addm{'Action'} = $action;
-        $addm{'Benefit'} = $benefit;
-        push(@addms, {%addm});
+        my ($key, $value) = split /:/, $line;
+        $key=trim($key);
+        $key =~ s{(\w+)}{\u\L$1}g;
+        if ($key eq "Oraclecluster"){
+            $cms{"OracleClusterware"} = parseBool(trim($value));
+        } elsif ($key eq "Veritascluster"){
+            $cms{"VeritasClusterServer"} = parseBool(trim($value));
+        } elsif ($key eq "Suncluster"){
+            $cms{"SunCluster"} = parseBool(trim($value));
+        } elsif ($key eq "Aixcluster"){
+            $cms{"HACMP"} = parseBool(trim($value));
+        } 
+        $value=trim($value);
     }
 
-    return \@addms;
-
+    return %cms;
 }
 
 1;

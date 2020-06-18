@@ -33,15 +33,16 @@ sub Backups {
     for my $c (split /\n/, $cmdOutput) {
         my %backup;
         my $line = $c;
+        my @weekDaysArray;
         my ($backupType, $hour, $weekDays, $avgBckSize, $retention) = split /\|\|\|/, $line;
         $backupType=trim($backupType);
         $hour=trim($hour);
-        $weekDays=trim($weekDays);
-        $avgBckSize=trim($avgBckSize);
+        @weekDaysArray=split /,/, trim($weekDays);
+        $avgBckSize=parseNumber(trim($avgBckSize));
         $retention=trim($retention);
         $backup{'BackupType'} = $backupType;
         $backup{'Hour'} = $hour;
-        $backup{'WeekDays'} = $weekDays;
+        $backup{'WeekDays'} = \@weekDaysArray;
         $backup{'AvgBckSize'} = $avgBckSize;
         $backup{'Retention'} = $retention;
         push(@backups, {%backup});

@@ -96,7 +96,30 @@ sub parseBool {
 sub parseInt {
     my $s = shift;
 
+    die "Cannot convert ".$s."to int" unless $s =~ m/[-+]?[0-9]+/;
+    
     return $s + 0;
+}
+
+sub parseNumber {
+    my $s = shift;
+
+    die "Cannot convert ".$s."to number" unless $s =~ m/[-+]?[0-9]*\.?[0-9]+/;
+
+    return $s + 0.0;
+}
+
+sub parseNullableNumber {
+    my $s = shift;
+
+    my $null;
+    if ($s eq "") {
+		return $null;
+	} elsif ($s eq "N/A") {
+        return $null;
+    } else {
+        return parseNumber($s);
+    }
 }
 
 
@@ -108,7 +131,7 @@ sub parseCount { #to improve
 		return 0;
 	}
     
-	return $s + 0;
+	return parseInt($s);
 }
 
 sub logPrintln {

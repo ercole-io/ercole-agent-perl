@@ -33,15 +33,13 @@ sub Tablespaces {
     for my $c (split /\n/, $cmdOutput) {
         my %tablespace;
         my $line = $c;
-        my (undef, undef, $database, $name, $maxSize, $total, $used, $usedPerc, $status) = split /\|\|\|/, $line;
-        $database=trim($database);
+        my (undef, undef, undef, $name, $maxSize, $total, $used, $usedPerc, $status) = split /\|\|\|/, $line;
         $name=trim($name);
-        $maxSize=trim($maxSize);
-        $total=trim($total);
-        $used=trim($used);
-        $usedPerc=trim($usedPerc);
+        $maxSize=parseNumber(trim($maxSize));
+        $total=parseNumber(trim($total));
+        $used=parseNumber(trim($used));
+        $usedPerc=parseNumber(trim($usedPerc));
         $status=trim($status);
-        $tablespace{'Database'} = $database;
         $tablespace{'Name'} = $name;
         $tablespace{'MaxSize'} = $maxSize;
         $tablespace{'Total'} = $total;
