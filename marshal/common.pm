@@ -104,7 +104,7 @@ sub parseInt {
 sub parseNumber {
     my $s = shift;
 
-    die "Cannot convert ".$s."to number" unless $s =~ m/[-+]?[0-9]*\.?[0-9]+/;
+    die "Cannot convert \"".$s."\" to number" unless $s =~ m/[-+]?[0-9]*\.?[0-9]+/;
 
     return $s + 0.0;
 }

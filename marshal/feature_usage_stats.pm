@@ -36,8 +36,10 @@ sub FeatureUsageStats {
         $feature=trim($feature);
         $detectedUsages=parseInt(trim($detectedUsages));
         $currentlyUsed=parseBool(trim($currentlyUsed));
-        $firstUsageDate=Time::Piece->strptime(trim($firstUsageDate), "%Y-%m-%d %H:%M:%S")->strftime('%Y-%m-%dT%H:%M:%SZ'); 
-        $lastUsageDate=Time::Piece->strptime(trim($lastUsageDate), "%Y-%m-%d %H:%M:%S")->strftime('%Y-%m-%dT%H:%M:%SZ');
+        $firstUsageDate = trim($firstUsageDate);
+        $firstUsageDate =~ s/(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/$1-$2-$3T$4:$5:$6Z/g; 
+        $lastUsageDate = trim($lastUsageDate);
+        $lastUsageDate =~ s/(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/$1-$2-$3T$4:$5:$6Z/g; 
         $extraFeatureInfo=trim($extraFeatureInfo);
 
         $feature{'Product'} = $product;
