@@ -22,8 +22,6 @@ use warnings;
 use diagnostics;
 use lib "./marshal";
 use common;
-use Time::Piece;
-
 
 sub Patches {
     no warnings 'uninitialized';
@@ -38,7 +36,7 @@ sub Patches {
         $patchID=parseInt(trim($patchID));
         $action=trim($action);
         $description=trim($description);
-        $date=Time::Piece->strptime(trim($date), "%d-%b-%Y")->strftime("%F");
+        $date=trim($date);
         $patch{'Version'} = $version;
         $patch{'PatchID'} = $patchID;
         $patch{'Action'} = $action;

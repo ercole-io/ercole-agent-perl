@@ -34,7 +34,7 @@ sub Database {
     
         my ($name, $uniqueName, $instanceNumber, $status, $version, 
             $platform, $archiveLog, $charset, $ncharset, $blockSize, 
-            $cpuCount, $sgaTarget, $pgaTarget, $memoryTaget, $sgaMaxSize, 
+            $cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize, 
             $segmentsSize, $datafileSize, $allocated, $elapsed, $dbtime, $dailycpuusage, $work, $asm, $dataguard) = split /\|\|\|/, $line;
         $name=trim($name);
         $uniqueName=trim($uniqueName);
@@ -49,7 +49,7 @@ sub Database {
         $cpuCount=parseInt(trim($cpuCount));
         $sgaTarget=parseNumber(trim($sgaTarget));
         $pgaTarget=parseNumber(trim($pgaTarget));
-        $memoryTaget=parseNumber(trim($memoryTaget));
+        $memoryTarget=parseNumber(trim($memoryTarget));
         $sgaMaxSize=parseNumber(trim($sgaMaxSize));
         $segmentsSize=parseNumber(trim($segmentsSize));
         $datafileSize=parseNumber(trim($datafileSize));
@@ -83,7 +83,7 @@ sub Database {
         $db{'CPUCount'} = $cpuCount;
         $db{'SGATarget'} = $sgaTarget;
         $db{'PGATarget'} = $pgaTarget;
-        $db{'MemoryTarget'} = $memoryTaget;
+        $db{'MemoryTarget'} = $memoryTarget;
         $db{'SGAMaxSize'} = $sgaMaxSize;
         $db{'SegmentsSize'} = $segmentsSize;
         $db{'DatafileSize'} = $datafileSize;
