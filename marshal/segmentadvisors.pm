@@ -44,12 +44,12 @@ sub SegmentAdvisor {
             $partitionName=trim($partitionName);
             $reclaimable=parseNumber(trim($reclaimable));
             $recommendation=trim($recommendation);
-            $segmentAdvisor{'SegmentOwner'} = $segmentOwner;
-            $segmentAdvisor{'SegmentName'} = $segmentName;
-            $segmentAdvisor{'SegmentType'} = $segmentType;
-            $segmentAdvisor{'PartitionName'} = $partitionName;
-            $segmentAdvisor{'Reclaimable'} = $reclaimable;
-            $segmentAdvisor{'Recommendation'} = $recommendation;
+            $segmentAdvisor{'segmentOwner'} = $segmentOwner;
+            $segmentAdvisor{'segmentName'} = $segmentName;
+            $segmentAdvisor{'segmentType'} = $segmentType;
+            $segmentAdvisor{'partitionName'} = $partitionName;
+            $segmentAdvisor{'reclaimable'} = $reclaimable;
+            $segmentAdvisor{'recommendation'} = $recommendation;
             push(@segmentAdvisors, {%segmentAdvisor});            
         }
         $count++;  

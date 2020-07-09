@@ -37,11 +37,11 @@ sub Patches {
         $action=trim($action);
         $description=trim($description);
         $date=trim($date);
-        $patch{'Version'} = $version;
-        $patch{'PatchID'} = $patchID;
-        $patch{'Action'} = $action;
-        $patch{'Description'} = $description;
-        $patch{'Date'} = $date;
+        $patch{'version'} = $version;
+        $patch{'patchID'} = $patchID;
+        $patch{'action'} = $action;
+        $patch{'description'} = $description;
+        $patch{'date'} = $date;
         
         push(@patches, {%patch});
     }

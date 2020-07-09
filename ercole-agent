@@ -79,60 +79,60 @@ sub buildData { #OK
 
     foreach my $db (@dbs){
         my %dbEntry = %$db;
-        my $dbStatus = fetchDbStatus($dbEntry{"DBName"}, $dbEntry{"OracleHome"}); #OPEN
+        my $dbStatus = fetchDbStatus($dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #OPEN
 
         if ($dbStatus =~ m/OPEN/) {
-			my $outVersion = fetcher("dbversion", $dbEntry{"DBName"}, $dbEntry{"OracleHome"}); #$db=XE, #outVersion 18.0.0.0
+			my $outVersion = fetcher("dbversion", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #$db=XE, #outVersion 18.0.0.0
         	my ($dbVersion) = split /\./, $outVersion;
 		
 			if ($configuration{'forcestats'}) { #true, ok
-				fetcher("stats", $dbEntry{"DBName"}, $dbEntry{"OracleHome"}); #Update db stats
+				fetcher("stats", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #Update db stats
 			}
 
-			$out = fetcher("db", $dbEntry{"DBName"}, $dbEntry{"OracleHome"}, $configuration{'AWR'});
+			$out = fetcher("db", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $configuration{'AWR'});
 			my %database = marshal::Database($out); #OK 
 
-			$out = fetcher("tablespace", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
-			$database{'Tablespaces'} = marshal::Tablespaces($out); #OK
+			$out = fetcher("tablespace", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+			$database{'tablespaces'} = marshal::Tablespaces($out); #OK
 			
-			$out = fetcher("schema", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
-			$database{'Schemas'} = marshal::Schemas($out); #OK
+			$out = fetcher("schema", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+			$database{'schemas'} = marshal::Schemas($out); #OK
 
-			$out = fetcher("patch", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"}); #empty, OK
-			$database{'Patches'} = marshal::Patches($out); #OK
+			$out = fetcher("patch", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"}); #empty, OK
+			$database{'patches'} = marshal::Patches($out); #OK
 
-			$out = fetcher("opt", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"});
-			$database{'FeatureUsageStats'} = marshal::FeatureUsageStats($out); #OK 
+			$out = fetcher("opt", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"});
+			$database{'featureUsageStats'} = marshal::FeatureUsageStats($out); #OK 
 
-			$out = fetcher("license",$dbEntry{"DBName"}, $dbVersion, $info{'HardwareAbstractionTechnology'}, $dbEntry{"OracleHome"});
-			$database{'Licenses'} = marshal::Licenses($out); #OK
+			$out = fetcher("license",$dbEntry{"dbName"}, $dbVersion, $info{'hardwareAbstractionTechnology'}, $dbEntry{"oracleHome"});
+			$database{'licenses'} = marshal::Licenses($out); #OK
 			
-			$out = fetcher("addm", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
+			$out = fetcher("addm", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
 			if ($out =~ m/Diagnostic Package License is needed for using this feature./) {
 				marshal::logPrintln("Detected Diagnostic Package License is needed for using this feature error. Ignored!");
-				$database{'ADDMs'} = (); 
+				$database{'addms'} = (); 
 			} else {
-				$database{'ADDMs'} = marshal::Addms($out); #OK 
+				$database{'addms'} = marshal::Addms($out); #OK 
 			}
 
-			$out = fetcher("segmentadvisor", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
-			$database{'SegmentAdvisors'} = marshal::SegmentAdvisor($out); #OK 
+			$out = fetcher("segmentadvisor", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+			$database{'segmentAdvisors'} = marshal::SegmentAdvisor($out); #OK 
 
-			$out = fetcher("psu", $dbEntry{"DBName"}, $dbVersion, $dbEntry{"OracleHome"});
-			$database{'PSUs'} = marshal::PSU($out); #OK 
+			$out = fetcher("psu", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"});
+			$database{'psus'} = marshal::PSU($out); #OK 
 
-			$out = fetcher("backup", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
+			$out = fetcher("backup", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
 			if ($out =~ m/unable to extend temp segment/) {
 				marshal::logPrintln("Detected unable to extend temp segment error. Ignored!");
-				$database{'Backups'}=();
+				$database{'backups'}=();
 			} else {
-				$database{'Backups'} = marshal::Backups($out); #OK 
+				$database{'backups'} = marshal::Backups($out); #OK 
 			}
 
 			push (@databases, {%database}); #OK
 			
 		} elsif ($dbStatus =~ m/MOUNTED/) {
-			$out = fetcher("dbmounted", $dbEntry{"DBName"}, $dbEntry{"OracleHome"});
+			$out = fetcher("dbmounted", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
 			my %database = marshal::Database($out); #should work, test with db not open
 			push (@databases, {%database}); #should work, test with db not open
 		}
@@ -141,27 +141,27 @@ sub buildData { #OK
 	my %hostData;
 	
 	my %db;
-	$db{"Databases"} = \@databases;
+	$db{"databases"} = \@databases;
 	my %oracle;
-	$oracle{"Database"} = \%db;
+	$oracle{"database"} = \%db;
 
 	my %features;
-	$features{'Oracle'} = \%oracle;
+	$features{'oracle'} = \%oracle;
 
-	$hostData{'Hostname'} = $info{'Hostname'};
+	$hostData{'hostname'} = $info{'hostname'};
 	#override host name with the one in config if != default
 	if ($configuration{'hostname'} ne "default") {
-		$hostData{'Hostname'} = $configuration{'hostname'};
+		$hostData{'hostname'} = $configuration{'hostname'};
 	}
-	$hostData{'Location'} = $configuration{'location'};	
-	$hostData{'Environment'} = $configuration{'envtype'};
-	$hostData{'Tags'}=[];
-	$hostData{'AgentVersion'} = $version;
-	$hostData{'SchemaVersion'} = $hostDataSchemaVersion;
-	$hostData{'Info'} = \%info;
-	$hostData{'ClusterMembershipStatus'} = \%clusterMembershipStatus;
-	$hostData{'Features'} = \%features;
-	$hostData{'Filesystems'} = \@filesystems;
+	$hostData{'location'} = $configuration{'location'};	
+	$hostData{'environment'} = $configuration{'envtype'};
+	$hostData{'tags'}=[];
+	$hostData{'agentVersion'} = $version;
+	$hostData{'schemaVersion'} = $hostDataSchemaVersion;
+	$hostData{'info'} = \%info;
+	$hostData{'clusterMembershipStatus'} = \%clusterMembershipStatus;
+	$hostData{'features'} = \%features;
+	$hostData{'filesystems'} = \@filesystems;
 
 	sendData(\%hostData, \%configuration);
 }
@@ -234,7 +234,8 @@ sub fetcher {
     my $baseDir = config::getBaseDir();
     	
     my $cmd = $baseDir."/fetch/".$fetcherName;
-  	my $out = qx/$cmd $param1 $param2 $param3 $param4/; #cmd execution
+    my $out = qx/$cmd $param1 $param2 $param3 $param4/; #cmd execution
+
 	return $out;
 }
 

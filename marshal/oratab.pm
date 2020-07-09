@@ -35,8 +35,8 @@ sub Oratab {
         $dbname=trim($dbname);
         $oraclehome=trim($oraclehome);
 
-        $oratabEntry{'DBName'} = $dbname;
-        $oratabEntry{'OracleHome'} = $oraclehome;
+        $oratabEntry{'dbName'} = $dbname;
+        $oratabEntry{'oracleHome'} = $oraclehome;
 
         push(@oratab, {%oratabEntry});
     }

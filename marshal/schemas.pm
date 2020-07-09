@@ -38,11 +38,11 @@ sub Schemas {
         $tables=parseInt(trim($tables));
         $indexes=parseInt(trim($indexes));
         $lob=parseInt(trim($lob));
-        $schema{'User'} = $user;
-        $schema{'Total'} = $total;
-        $schema{'Tables'} = $tables;
-        $schema{'Indexes'} = $indexes;
-        $schema{'LOB'} = $lob;
+        $schema{'user'} = $user;
+        $schema{'total'} = $total;
+        $schema{'tables'} = $tables;
+        $schema{'indexes'} = $indexes;
+        $schema{'lob'} = $lob;
 
         push(@schemas, {%schema});
     }

@@ -40,12 +40,12 @@ sub Tablespaces {
         $used=parseNumber(trim($used));
         $usedPerc=parseNumber(trim($usedPerc));
         $status=trim($status);
-        $tablespace{'Name'} = $name;
-        $tablespace{'MaxSize'} = $maxSize;
-        $tablespace{'Total'} = $total;
-        $tablespace{'Used'} = $used;
-        $tablespace{'UsedPerc'} = $usedPerc;
-        $tablespace{'Status'} = $status;
+        $tablespace{'name'} = $name;
+        $tablespace{'maxSize'} = $maxSize;
+        $tablespace{'total'} = $total;
+        $tablespace{'used'} = $used;
+        $tablespace{'usedPerc'} = $usedPerc;
+        $tablespace{'status'} = $status;
 
         push(@tablespaces, {%tablespace});
     }

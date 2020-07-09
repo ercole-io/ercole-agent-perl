@@ -36,8 +36,8 @@ sub PSU {
         my ($description, $date) = split /\|\|\|/, $line;
         $description=trim($description);
         $date=trim($date);
-        $psu{'Description'} = $description;
-        $psu{'Date'} = $date;
+        $psu{'description'} = $description;
+        $psu{'date'} = $date;
         push(@psus, {%psu});
     }
 
