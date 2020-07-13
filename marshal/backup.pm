@@ -40,11 +40,11 @@ sub Backups {
         @weekDaysArray=split /,/, trim($weekDays);
         $avgBckSize=parseNumber(trim($avgBckSize));
         $retention=trim($retention);
-        $backup{'BackupType'} = $backupType;
-        $backup{'Hour'} = $hour;
-        $backup{'WeekDays'} = \@weekDaysArray;
-        $backup{'AvgBckSize'} = $avgBckSize;
-        $backup{'Retention'} = $retention;
+        $backup{'backupType'} = $backupType;
+        $backup{'hour'} = $hour;
+        $backup{'weekDays'} = \@weekDaysArray;
+        $backup{'avgBckSize'} = $avgBckSize;
+        $backup{'retention'} = $retention;
         push(@backups, {%backup});
     }
 

@@ -38,10 +38,10 @@ sub Addms {
         $recommendation=trim($recommendation);
         $action=trim($action);
         $benefit=parseNumber(trim($benefit));
-        $addm{'Finding'} = $finding;
-        $addm{'Recommendation'} = $recommendation;
-        $addm{'Action'} = $action;
-        $addm{'Benefit'} = $benefit;
+        $addm{'finding'} = $finding;
+        $addm{'recommendation'} = $recommendation;
+        $addm{'action'} = $action;
+        $addm{'benefit'} = $benefit;
         push(@addms, {%addm});
     }
 

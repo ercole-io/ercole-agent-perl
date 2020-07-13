@@ -36,13 +36,13 @@ sub ClusterMembershipStatus {
         $key=trim($key);
         $key =~ s{(\w+)}{\u\L$1}g;
         if ($key eq "Oraclecluster"){
-            $cms{"OracleClusterware"} = parseBool(trim($value));
+            $cms{"oracleClusterware"} = parseBool(trim($value));
         } elsif ($key eq "Veritascluster"){
-            $cms{"VeritasClusterServer"} = parseBool(trim($value));
+            $cms{"veritasClusterServer"} = parseBool(trim($value));
         } elsif ($key eq "Suncluster"){
-            $cms{"SunCluster"} = parseBool(trim($value));
+            $cms{"sunCluster"} = parseBool(trim($value));
         } elsif ($key eq "Aixcluster"){
-            $cms{"HACMP"} = parseBool(trim($value));
+            $cms{"hacmp"} = parseBool(trim($value));
         } 
         $value=trim($value);
     }

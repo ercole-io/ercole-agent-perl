@@ -36,29 +36,33 @@ sub Host {
         $key=trim($key);
         $key =~ s{(\w+)}{\u\L$1}g;
         if ($key eq "Cpumodel"){
-            $key = "CPUModel";
+            $key = "cpuModel";
         } elsif ($key eq "Cpucores"){
-            $key = "CPUCores";
+            $key = "cpuCores";
         } elsif ($key eq "Cputhreads"){
-            $key = "CPUThreads";
+            $key = "cpuThreads";
         } elsif ($key eq "Cpufrequency"){
-            $key = "CPUFrequency";
+            $key = "cpuFrequency";
         } elsif ($key eq "Cpusockets"){
-            $key = "CPUSockets";
+            $key = "cpuSockets";
         } elsif ($key eq "Threadspercore"){
-            $key = "ThreadsPerCore";
+            $key = "threadsPerCore";
         } elsif ($key eq "Corespersocket"){
-            $key = "CoresPerSocket";
+            $key = "coresPerSocket";
         } elsif ($key eq "Os"){
-            $key = "OS";
+            $key = "os";
         } elsif ($key eq "Osversion"){
-            $key = "OSVersion";
+            $key = "osVersion";
+        } elsif ($key eq "Kernel"){
+            $key = "kernel";
+        } elsif ($key eq "Hostname"){
+            $key = "hostname";
         } elsif ($key eq "Kernelversion"){
-            $key = "KernelVersion";
+            $key = "kernelVersion";
         } elsif ($key eq "Memorytotal"){
-            $key = "MemoryTotal";
+            $key = "memoryTotal";
         } elsif ($key eq "Swaptotal"){
-            $key = "SwapTotal";
+            $key = "swapTotal";
         } elsif ($key eq "Oraclecluster"){
             next;
         } elsif ($key eq "Veritascluster"){
@@ -68,15 +72,15 @@ sub Host {
         } elsif ($key eq "Aixcluster"){
             next;
         } elsif ($key eq "Virtual"){
-            $key = "HardwareAbstraction";
+            $key = "hardwareAbstraction";
         } elsif ($key eq "Type"){
-            $key = "HardwareAbstractionTechnology";
+            $key = "hardwareAbstractionTechnology";
         } 
         $value=trim($value);
 
-        if ($key eq "CPUCores" || $key eq "CPUThreads" || $key eq "CPUSockets" || $key eq "MemoryTotal" || $key eq "SwapTotal" || $key eq "ThreadsPerCore" || $key eq "CoresPerSocket" ){
+        if ($key eq "cpuCores" || $key eq "cpuThreads" || $key eq "cpuSockets" || $key eq "memoryTotal" || $key eq "swapTotal" || $key eq "threadsPerCore" || $key eq "coresPerSocket" ){
             $value = parseInt($value);
-        } elsif ($key eq "HardwareAbstraction") {
+        } elsif ($key eq "hardwareAbstraction") {
             $value = parseBool($value);
             if ($value eq parseBool("Y")) {
                 $value = "VIRT";

@@ -32,13 +32,14 @@ sub Database {
         my %patch;
         my $line = $c;
     
-        my ($name, $uniqueName, $instanceNumber, $status, $version, 
+        my ($name, $uniqueName, $instanceNumber, $instanceName, $status, $version, 
             $platform, $archiveLog, $charset, $ncharset, $blockSize, 
             $cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize, 
             $segmentsSize, $datafileSize, $allocated, $elapsed, $dbtime, $dailycpuusage, $work, $asm, $dataguard) = split /\|\|\|/, $line;
         $name=trim($name);
         $uniqueName=trim($uniqueName);
         $instanceNumber=parseInt(trim($instanceNumber));
+        $instanceName=trim($instanceName);
         $status=trim($status);
         $version=trim($version);
         $platform=trim($platform);
@@ -69,47 +70,48 @@ sub Database {
              die "archivelog value should be ARCHIVELOG or NOARCHIVELOG";
         }
 
-        $db{'Name'} = $name;
-        $db{'UniqueName'} = $uniqueName;
-        $db{'InstanceNumber'} = $instanceNumber;
-        $db{'Status'} = $status;
-        $db{'IsCDB'} = parseBool("FALSE");
-        $db{'Version'} = $version;
-        $db{'Platform'} = $platform;
-        $db{'Archivelog'} = $archiveLog;
-        $db{'Charset'} = $charset;
-        $db{'NCharset'} = $ncharset;
-        $db{'BlockSize'} = $blockSize;
-        $db{'CPUCount'} = $cpuCount;
-        $db{'SGATarget'} = $sgaTarget;
-        $db{'PGATarget'} = $pgaTarget;
-        $db{'MemoryTarget'} = $memoryTarget;
-        $db{'SGAMaxSize'} = $sgaMaxSize;
-        $db{'SegmentsSize'} = $segmentsSize;
-        $db{'DatafileSize'} = $datafileSize;
-        $db{'Allocated'} = $allocated;
-        $db{'Elapsed'} = $elapsed;
-        $db{'DBTime'} = $dbtime;
-        $db{'DailyCPUUsage'} = $dailycpuusage;
-        $db{'Work'} = $work;
-        $db{'ASM'} = parseBool($asm);
-        $db{'Dataguard'} = parseBool($dataguard);
+        $db{'name'} = $name;
+        $db{'uniqueName'} = $uniqueName;
+        $db{'instanceNumber'} = $instanceNumber;
+        $db{'instanceName'} = $instanceName;
+        $db{'status'} = $status;
+        $db{'isCDB'} = parseBool("FALSE");
+        $db{'version'} = $version;
+        $db{'platform'} = $platform;
+        $db{'archivelog'} = $archiveLog;
+        $db{'charset'} = $charset;
+        $db{'nCharset'} = $ncharset;
+        $db{'blockSize'} = $blockSize;
+        $db{'cpuCount'} = $cpuCount;
+        $db{'sgaTarget'} = $sgaTarget;
+        $db{'pgaTarget'} = $pgaTarget;
+        $db{'memoryTarget'} = $memoryTarget;
+        $db{'sgaMaxSize'} = $sgaMaxSize;
+        $db{'segmentsSize'} = $segmentsSize;
+        $db{'datafileSize'} = $datafileSize;
+        $db{'allocated'} = $allocated;
+        $db{'elapsed'} = $elapsed;
+        $db{'dbTime'} = $dbtime;
+        $db{'dailyCPUUsage'} = $dailycpuusage;
+        $db{'work'} = $work;
+        $db{'asm'} = parseBool($asm);
+        $db{'dataguard'} = parseBool($dataguard);
 	    if ($dailycpuusage eq '') {
-		    $db{'DailyCPUUsage'} = $work;
+		    $db{'dailyCPUUsage'} = $work;
     	}
 
         #empty fields
-        $db{'Patches'}=[];
-        $db{'Tablespaces'}=[];
-        $db{'Schemas'}=[];
-        $db{'Licenses'}=[];
-        $db{'ADDMs'}=[];
-        $db{'SegmentAdvisors'}=[];
-        $db{'PSUs'}=[];
-        $db{'Backups'}=[];
-        $db{'FeatureUsageStats'}=[];
-        $db{'PDBs'}=[];
-        $db{'Services'}=[];
+        $db{'patches'}=[];
+        $db{'tablespaces'}=[];
+        $db{'schemas'}=[];
+        $db{'licenses'}=[];
+        $db{'addms'}=[];
+        $db{'segmentAdvisors'}=[];
+        $db{'psus'}=[];
+        $db{'backups'}=[];
+        $db{'featureUsageStats'}=[];
+        $db{'pdbs'}=[];
+        $db{'services'}=[];
     }
 
     return %db;

@@ -42,8 +42,8 @@ sub Licenses {
             my $old = "\t";
             my $new = "" ;
             $value =~ s/$old/$new/g;
-            $license{'Name'} = $key;
-            $license{'Count'} = parseCount($value);
+            $license{'name'} = $key;
+            $license{'count'} = parseCount($value);
             push(@licenses, {%license});
         } 
     }

@@ -23,6 +23,7 @@ select
 (select value from v$parameter where name='db_name') as Nome_DB,
 (select db_unique_name from v$database) as DB_Unique_name,
 (select instance_number from v$instance) as Instance_number,
+(select instance_name from v$instance) AS Instance_name,
 (select status from v$instance) as DB_Status,
 ((SELECT version FROM V$INSTANCE)||(select (case when UPPER(banner) like '%EXTREME%' then ' Extreme Edition' when UPPER(banner) like '%ENTERPRISE%' then ' Enterprise Edition' else ' Standard Edition' end) from v$version where rownum=1)) as Versione,
 (SELECT platform_name  FROM V$database) as platform,
@@ -44,7 +45,7 @@ select
 --(SELECT replace(replace(output,'Elapsed:',''),chr(32), '') FROM TABLE (DBMS_WORKLOAD_REPOSITORY.awr_report_text (:dbid, :inst_num, :bid, :eid, 0)) where rownum <20 and output like '%Elapsed: %'),
 --(SELECT replace(replace(output,'DB Time:',''),chr(32), '') FROM TABLE (DBMS_WORKLOAD_REPOSITORY.awr_report_text (:dbid, :inst_num, :bid, :eid, 0)) where rownum <20 and output like '%DB Time: %'),
 --:elapsed,:dbtime,(select :result from dual),
-'0','0','0','0'
+'0','0','0','0',
 (select case when (select count(*) from v$datafile where name like '+%') > 0 then 'Y' else 'N' end as "ASM" from dual ),
 case when ( select count(*) from V$DATAGUARD_CONFIG) > 1 then 'Y' else 'N' end  as "Dataguard"
 from dual;

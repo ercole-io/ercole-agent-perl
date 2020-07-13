@@ -42,13 +42,13 @@ sub FeatureUsageStats {
         $lastUsageDate =~ s/(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/$1-$2-$3T$4:$5:$6Z/g; 
         $extraFeatureInfo=trim($extraFeatureInfo);
 
-        $feature{'Product'} = $product;
-        $feature{'Feature'} = $feature;
-        $feature{'DetectedUsages'} = parseInt($detectedUsages);
-        $feature{'CurrentlyUsed'} = parseBool($currentlyUsed);
-        $feature{'FirstUsageDate'} = $firstUsageDate;
-        $feature{'LastUsageDate'} = $lastUsageDate;
-        $feature{'ExtraFeatureInfo'} = $extraFeatureInfo;      
+        $feature{'product'} = $product;
+        $feature{'feature'} = $feature;
+        $feature{'detectedUsages'} = parseInt($detectedUsages);
+        $feature{'currentlyUsed'} = parseBool($currentlyUsed);
+        $feature{'firstUsageDate'} = $firstUsageDate;
+        $feature{'lastUsageDate'} = $lastUsageDate;
+        $feature{'extraFeatureInfo'} = $extraFeatureInfo;      
 
         push(@features, {%feature});
     }
