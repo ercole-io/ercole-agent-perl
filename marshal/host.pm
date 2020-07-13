@@ -53,6 +53,10 @@ sub Host {
             $key = "os";
         } elsif ($key eq "Osversion"){
             $key = "osVersion";
+        } elsif ($key eq "Kernel"){
+            $key = "kernel";
+        } elsif ($key eq "Hostname"){
+            $key = "hostname";
         } elsif ($key eq "Kernelversion"){
             $key = "kernelVersion";
         } elsif ($key eq "Memorytotal"){
