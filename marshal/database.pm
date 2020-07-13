@@ -32,13 +32,14 @@ sub Database {
         my %patch;
         my $line = $c;
     
-        my ($name, $uniqueName, $instanceNumber, $status, $version, 
+        my ($name, $uniqueName, $instanceNumber, $instanceName, $status, $version, 
             $platform, $archiveLog, $charset, $ncharset, $blockSize, 
             $cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize, 
             $segmentsSize, $datafileSize, $allocated, $elapsed, $dbtime, $dailycpuusage, $work, $asm, $dataguard) = split /\|\|\|/, $line;
         $name=trim($name);
         $uniqueName=trim($uniqueName);
         $instanceNumber=parseInt(trim($instanceNumber));
+        $instanceName=trim($instanceName);
         $status=trim($status);
         $version=trim($version);
         $platform=trim($platform);
@@ -72,6 +73,7 @@ sub Database {
         $db{'name'} = $name;
         $db{'uniqueName'} = $uniqueName;
         $db{'instanceNumber'} = $instanceNumber;
+        $db{'instanceName'} = $instanceName;
         $db{'status'} = $status;
         $db{'isCDB'} = parseBool("FALSE");
         $db{'version'} = $version;
