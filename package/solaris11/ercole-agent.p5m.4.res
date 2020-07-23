@@ -66,6 +66,8 @@ file ../../fetch/tablespace path=opt/ercole-agent/fetch/tablespace owner=root \
     group=bin mode=0755
 file ../../fetch/tablespace_pdb path=opt/ercole-agent/fetch/tablespace_pdb \
     owner=root group=bin mode=0644
+file ../../fetch/running-databases path=opt/ercole-agent/fetch/running-databases \
+    owner=root group=bin mode=0755
 dir  path=opt/ercole-agent/lib owner=root group=bin mode=0755
 dir  path=opt/ercole-agent/lib/HTTP owner=root group=bin mode=0755
 dir  path=opt/ercole-agent/lib/HTTP/HTTP owner=root group=bin mode=0755
