@@ -67,6 +67,7 @@ sub buildData { #OK
     my $out = fetcher("host", "", "X"); #ok
     my %info = marshal::Host($out); #ok
     my %clusterMembershipStatus = marshal::ClusterMembershipStatus($out); #ok
+	my %db;
 
     $out = fetcher("filesystem", "", "X"); #ok
     my @filesystems = marshal::Filesystems($out); #array of hashes' address, ok
@@ -74,6 +75,26 @@ sub buildData { #OK
 
     $out = fetcher("oratab", $configuration{'oratab'}, "X"); #ok
     my @dbs = marshal::Oratab($out); #array of hashes' address, ok
+
+    $out = fetcher("running-databases"); #ok
+    my @runningDBs = marshal::RunningDatabases($out); #array of running dbs
+
+	my @runningUnlistedDatabases;
+
+	foreach my $runningDB (@runningDBs) {
+		my $found = 0;
+		foreach my $db (@dbs) {
+			my %dbEntry = %$db;
+			if ($dbEntry{"dbName"} eq $runningDB) {
+				$found = 1;
+				last if 1;
+			}
+		}	
+		if ($found == 0) {
+			push (@runningUnlistedDatabases, $runningDB); #OK
+		}
+	}
+	$db{"unlistedRunningDatabases"} = \@runningUnlistedDatabases;
 
 	my @databases;
 
@@ -140,7 +161,6 @@ sub buildData { #OK
 
 	my %hostData;
 	
-	my %db;
 	$db{"databases"} = \@databases;
 	my %oracle;
 	$oracle{"database"} = \%db;
@@ -230,7 +250,7 @@ sub fetcher {
     no warnings 'uninitialized';
     my ($fetcherName, $param1, $param2, $param3, $param4) = @_;
 
-	marshal::logPrintln("Fetching ".$fetcherName.": ".$param1." ".$param2." ".$param3." ".$param4);
+	marshal::logPrintln("Fetching ".$fetcherName." ".$param1." ".$param2." ".$param3." ".$param4);
     my $baseDir = config::getBaseDir();
     	
     my $cmd = $baseDir."/fetch/".$fetcherName;
