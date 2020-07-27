@@ -80,7 +80,7 @@ sub buildData { #OK
     $out = fetcher("running-databases"); #ok
     my @runningDBs = marshal::RunningDatabases($out); #array of running dbs
 
-	my @runningUnlistedDatabases = [];
+	my @runningUnlistedDatabases = ();
 
 	foreach my $runningDB (@runningDBs) {
 		my $found = 0;
@@ -96,7 +96,7 @@ sub buildData { #OK
 		}
 	}
 	$db{"unlistedRunningDatabases"} = \@runningUnlistedDatabases;
-
+	
 	my @databases;
 
     foreach my $db (@dbs){
@@ -119,7 +119,7 @@ sub buildData { #OK
 				if ($out eq "TRUE") {
 					$out = fetcher("listpdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
 					my @pdbs = marshal::ListPDBs($out); #OK
-					
+
 					for (my $i = 0; $i<scalar(@pdbs); $i++) {
 						$out = fetcher("tablespace_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
 						$pdbs[$i]{"tablespaces"} = marshal::Tablespaces($out); #OK

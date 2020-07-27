@@ -47,7 +47,7 @@ sub RunningDatabases {
     no warnings 'uninitialized';
     my $cmdOutput = shift;
 
-	my @list = [];
+	my @list = ();
     for my $line (split /\n/, $cmdOutput) {
         my $line = trim($line);
     
