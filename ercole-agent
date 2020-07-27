@@ -37,6 +37,7 @@ use oratab;
 use database;
 use tablespaces;
 use schemas;
+use listpdb;
 use feature_usage_stats;
 use licenses;
 use patches;
@@ -79,7 +80,7 @@ sub buildData { #OK
     $out = fetcher("running-databases"); #ok
     my @runningDBs = marshal::RunningDatabases($out); #array of running dbs
 
-	my @runningUnlistedDatabases;
+	my @runningUnlistedDatabases = ();
 
 	foreach my $runningDB (@runningDBs) {
 		my $found = 0;
@@ -95,7 +96,7 @@ sub buildData { #OK
 		}
 	}
 	$db{"unlistedRunningDatabases"} = \@runningUnlistedDatabases;
-
+	
 	my @databases;
 
     foreach my $db (@dbs){
@@ -103,15 +104,42 @@ sub buildData { #OK
         my $dbStatus = fetchDbStatus($dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #OPEN
 
         if ($dbStatus =~ m/OPEN/) {
+			my %database;
 			my $outVersion = fetcher("dbversion", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #$db=XE, #outVersion 18.0.0.0
-        	my ($dbVersion) = split /\./, $outVersion;
-		
+        	my ($dbVersion, $b, $c, $d) = split /\./, $outVersion;
+			
+			$out = fetcher("db", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $configuration{'AWR'});
+			%database = marshal::Database($out); #OK 
+
+
+			if ($dbVersion > 11 || ($dbVersion == 11 && $b >= 2)) {
+				my $out = marshal::trim(fetcher("checkpdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}));
+				$database{'isCDB'} = marshal::parseBool($out);
+				
+				if ($out eq "TRUE") {
+					$out = fetcher("listpdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+					my @pdbs = marshal::ListPDBs($out); #OK
+
+					for (my $i = 0; $i<scalar(@pdbs); $i++) {
+						$out = fetcher("tablespace_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
+						$pdbs[$i]{"tablespaces"} = marshal::Tablespaces($out); #OK
+						
+						$out = fetcher("schema_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
+						$pdbs[$i]{"schemas"} = marshal::Schemas($out); #OK
+					}
+
+					$database{'pdbs'} = \@pdbs;
+				} else {
+					$database{'pdbs'} = [];
+				}
+			} else {
+				$db{'isCDB'} = marshal::parseBool("FALSE");
+				$database{'pdbs'} = [];
+			}
+
 			if ($configuration{'forcestats'}) { #true, ok
 				fetcher("stats", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #Update db stats
 			}
-
-			$out = fetcher("db", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $configuration{'AWR'});
-			my %database = marshal::Database($out); #OK 
 
 			$out = fetcher("tablespace", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
 			$database{'tablespaces'} = marshal::Tablespaces($out); #OK

@@ -23,39 +23,28 @@ use diagnostics;
 use lib "./marshal";
 use common;
 
-# Licenses returns a list of licenses from the output of the licenses fetcher command.
-sub Oratab { 
+# ListPDBs returns a PDBs hash from the output of the listpdb
+# fetcher command. Host fields output is in CSV format separated by '|||'
+sub ListPDBs {
     no warnings 'uninitialized';
     my $cmdOutput = shift;
+    my @pdbs;
 
-	my @oratab;
-    for my $line (split /\n/, $cmdOutput) {
-        my ($dbname, $oraclehome) = split /:/, $line;
-        my %oratabEntry;
-        $dbname=trim($dbname);
-        $oraclehome=trim($oraclehome);
+    for my $c (split /\n/, $cmdOutput) {
+        my %pdb;
+        my $line = $c;
+        my ($name, $status) = split /\|\|\|/, $line;
+        
+        $name=trim($name);
+        $status=trim($status);
 
-        $oratabEntry{'dbName'} = $dbname;
-        $oratabEntry{'oracleHome'} = $oraclehome;
-
-        push(@oratab, {%oratabEntry});
+        $pdb{'name'} = $name;
+        $pdb{'status'} = $status;
+        $pdb{'services'} = [];
+        push(@pdbs, {%pdb});
     }
-    return @oratab;
-}
 
-sub RunningDatabases { 
-    no warnings 'uninitialized';
-    my $cmdOutput = shift;
-
-	my @list = ();
-    for my $line (split /\n/, $cmdOutput) {
-        my $line = trim($line);
-    
-        next if $line eq "";
-
-        push(@list, $line);
-    }
-    return @list;
+    return @pdbs;
 }
 
 1;
