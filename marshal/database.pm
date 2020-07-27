@@ -75,7 +75,6 @@ sub Database {
         $db{'instanceNumber'} = $instanceNumber;
         $db{'instanceName'} = $instanceName;
         $db{'status'} = $status;
-        $db{'isCDB'} = parseBool("FALSE");
         $db{'version'} = $version;
         $db{'platform'} = $platform;
         $db{'archivelog'} = $archiveLog;
@@ -110,7 +109,6 @@ sub Database {
         $db{'psus'}=[];
         $db{'backups'}=[];
         $db{'featureUsageStats'}=[];
-        $db{'pdbs'}=[];
         $db{'services'}=[];
     }
 
