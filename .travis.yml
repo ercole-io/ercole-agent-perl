@@ -58,7 +58,6 @@ script:
   - docker exec -it package_builder /bin/sh -c "cd ${WORKSPACE} && fpm -p ${PACKAGE_FILE} -n ercole-agent-perl -s dir -t ${FPM_TARGET} -a all --rpm-os ${DIST} --version ${VERSION} --name ercole-agent-perl ${ERCOLE_AGENT_PERL_FILES} ${ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES}"
   - ls
   - mv ${PACKAGE_FILE} /tmp/dist/
-  - tar -tvf /tmp/dist/${PACKAGE_FILE}
 
 deploy:
   - provider: script
