@@ -1,0 +1,48 @@
+os: linux
+dist: xenial
+language: perl
+perl:
+  - "5.8.8"
+
+services:
+  - docker
+
+sudo: required
+
+jobs:
+  include:
+    - env: OS=solaris DIST=solaris11 FPM_TARGET=tar PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1 # PACKAGE_BUILD_IMAGE is a stub
+    - env: OS=aix DIST=aix6.1 FPM_TARGET=rpm PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
+    - env: OS=hpux DIST=hpux FPM_TARGET=tar PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1 # PACKAGE_BUILD_IMAGE is a stub
+
+before_install:
+  - if [ -z ${TRAVIS_TAG} ] || [ ${TRAVIS_TAG} == *-* ]; then export VERSION=latest; else export VERSION=${TRAVIS_TAG}; fi
+  - echo ${TRAVIS_TAG}
+  - echo ${VERSION}
+
+install:
+  - mkdir /tmp/dist/
+  - sudo docker run -d --rm -it -e WORKSPACE="${WORKSPACE}" -e TRAVIS_REPO_SLUG="${TRAVIS_REPO_SLUG}" -e TRAVIS_BUILD_NUMBER="${TRAVIS_BUILD_NUMBER}" -v $PWD:"${WORKSPACE}" --name package_builder ${PACKAGE_BUILD_IMAGE} /bin/cat
+
+script:
+  - sed -i "s/\"latest\"/\"${VERSION}\"/" ercole-agent
+  - perl -c ercole-agent
+  - if [ $DIST_FAMILY == "aix" ]; then docker exec -it package_builder /bin/sh -c "cd ${WORKSPACE} && fpm -n ercole-agent -s dir -t ${FPM_TARGET} -a all --rpm-os ${DIST} --version ${VERSION} --name ercole-agent-perl config=/opt/ercole-agent config.json=/opt/ercole-agent/config.json ercole-agent=/opt/ercole-agent/ercole-agent fetch=/opt/ercole-agent lib=/opt/ercole-agent marshal=/opt/ercole-agent sql=/opt/ercole-agent package/aix/ercole-agent=/etc/rc.d/init.d/ercole-agent"; fi
+  - mv ercole-agent-*.* /tmp/dist/
+
+deploy:
+  - provider: script
+    script: cd /tmp/dist && echo $MAGIC_SCRIPT | base64 -d | bash > /dev/stdout 2>/dev/stdout
+    skip_cleanup: true
+    file_glob: true
+    file: /tmp/dist/*
+  - provider: releases
+    api_key: $GITHUB_RELEASE_TOKEN
+    file_glob: true
+    file: /tmp/dist/*
+    skip_cleanup: true
+    name: $VERSION
+    overwrite: true
+    on:
+      all_branches: true
+      tags: true
