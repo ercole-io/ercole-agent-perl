@@ -23,7 +23,6 @@ use diagnostics;
 
 use lib "./lib/JSON";
 use lib "./lib/HTTP";
-use lib "./lib/URI";
 
 use PP;
 use lib "./config";
@@ -105,7 +104,7 @@ sub buildData { #OK
 
         if ($dbStatus =~ m/OPEN/) {
 			my %database;
-			my $outVersion = fetcher("dbversion", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #$db=XE, #outVersion 18.0.0.0
+			my $outVersion = fetcher("dbversion", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
         	my ($dbVersion, $b, $c, $d) = split /\./, $outVersion;
 			
 			$out = fetcher("db", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $configuration{'AWR'});
@@ -226,7 +225,7 @@ sub sendData { #to test if success
 	my $b = JSON::PP::encode_json(\%data);
 	marshal::logPrintln("Data: " . $b);
 
-	if ($configuration{'UseCurl'}) { #true, ok
+	if ($configuration{'UseCurl'} eq 'true') { #true, ok
 		marshal::logPrintln("Sending data with curl");
 		if ($configuration{'EnableServerValidation'} eq "false"){
 			system("curl", "-H", "Content-Type: application/json", "-u", $configuration{'serverusr'}.":".$configuration{'serverpsw'}, "-d", $b, "-w", "StatusCode: %{http_code}",, $configuration{'serverurl'});
@@ -236,6 +235,7 @@ sub sendData { #to test if success
 		print "\n";
 		marshal::logPrintln("Hostdata sent!");
 	} else {
+		# use lib "./lib/URI";
 		my $client = LWP::UserAgent->new;
 
 		# Disable certificate validation if enableServerValidation is false
@@ -281,7 +281,7 @@ sub fetcher {
 	marshal::logPrintln("Fetching ".$fetcherName." ".$param1." ".$param2." ".$param3." ".$param4);
     my $baseDir = config::getBaseDir();
     	
-    my $cmd = $baseDir."/fetch/".$fetcherName;
+    my $cmd = $baseDir."/fetch/$^O/".$fetcherName;
     my $out = qx/$cmd $param1 $param2 $param3 $param4/; #cmd execution
 
 	return $out;
@@ -289,12 +289,12 @@ sub fetcher {
 
 sub fetchDbStatus {
     no warnings 'uninitialized';
-    my ($sid, $dbVersion) = @_;
-	marshal::logPrintln("Fetching db status: ".$sid);
+    my ($sid, $oracleHome) = @_;
+	marshal::logPrintln("Fetching db status ".$sid . " " . $oracleHome);
     my $baseDir = config::getBaseDir();
         
-	my $cmd = $baseDir."/fetch/dbstatus";
-    my $out = qx/$cmd $sid $dbVersion/ or die "UNREACHABLE"; #cmd execution
+	my $cmd = $baseDir."/fetch/$^O/dbstatus";
+    my $out = qx/$cmd $sid $oracleHome/ or die "UNREACHABLE"; #cmd execution
 
     return $out;
 }
