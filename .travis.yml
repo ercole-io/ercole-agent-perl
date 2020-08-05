@@ -30,8 +30,9 @@ install:
 script:
   - sed -i "s/\"latest\"/\"${VERSION}\"/" ercole-agent
   - perl -c ercole-agent
-  - if [ $DIST_FAMILY == "aix" ]; then docker exec -it package_builder /bin/sh -c "cd ${WORKSPACE} && fpm -n ercole-agent -s dir -t ${FPM_TARGET} -a all --rpm-os ${DIST} --version ${VERSION} --name ercole-agent-perl config=/opt/ercole-agent config.json=/opt/ercole-agent/config.json ercole-agent=/opt/ercole-agent/ercole-agent fetch=/opt/ercole-agent lib=/opt/ercole-agent marshal=/opt/ercole-agent sql=/opt/ercole-agent package/aix/ercole-agent=/etc/rc.d/init.d/ercole-agent"; fi
+  - docker exec -it package_builder /bin/sh -c "cd ${WORKSPACE} && fpm -n ercole-agent -s dir -t ${FPM_TARGET} -a all --rpm-os ${DIST} --version ${VERSION} --name ercole-agent-perl config=/opt/ercole-agent config.json=/opt/ercole-agent/config.json ercole-agent=/opt/ercole-agent/ercole-agent fetch=/opt/ercole-agent lib=/opt/ercole-agent marshal=/opt/ercole-agent sql=/opt/ercole-agent package/aix/ercole-agent=/etc/rc.d/init.d/ercole-agent"
   - mv ercole-agent-*.* /tmp/dist/
+  - ls /tmp/dist
 
 deploy:
   - provider: script
