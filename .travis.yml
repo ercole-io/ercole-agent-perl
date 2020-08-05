@@ -8,6 +8,9 @@ services:
   - docker
 
 sudo: required
+env:
+  global:
+    - WORKSPACE='/project'
 
 jobs:
   include:
