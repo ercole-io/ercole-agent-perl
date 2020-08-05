@@ -21,25 +21,25 @@ jobs:
       - DIST=solaris11 
       - FPM_TARGET=tar
       - PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
-      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/solaris=/opt/ercole-agent-perl/fetch package/solaris11/config.json=/opt/ercole-agent-perl/config.json'
+      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/solaris=/opt/ercole-agent-perl/fetch package/solaris11/config.json=/opt/ercole-agent-perl/config.json package/solaris11/ercole-agent-perl-start=/lib/svc/method/ercole-agent-perl-start package/solaris11/ercole-agent-perl.xml=/lib/svc/manifest/site/ercole-agent-perl.xml'
     - env: 
       - OS=aix 
       - DIST=aix6.1 
       - FPM_TARGET=rpm 
       - PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
-      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/aix=/opt/ercole-agent-perl/fetch package/aix/config.json=/opt/ercole-agent-perl/config.json package/aix/ercole-agent=/etc/rc.d/init.d/ercole-agent'
+      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/aix=/opt/ercole-agent-perl/fetch package/aix/config.json=/opt/ercole-agent-perl/config.json package/aix/ercole-agent-perl=/etc/rc.d/init.d/ercole-agent-perl'
     - env: 
       - OS=aix 
       - DIST=aix6.1 
       - FPM_TARGET=tar 
       - PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
-      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/aix=/opt/ercole-agent-perl/fetch package/aix/config.json=/opt/ercole-agent-perl/config.json package/aix/ercole-agent=/etc/rc.d/init.d/ercole-agent'
+      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/aix=/opt/ercole-agent-perl/fetch package/aix/config.json=/opt/ercole-agent-perl/config.json package/aix/ercole-agent-perl=/etc/rc.d/init.d/ercole-agent-perl'
     - env: 
       - OS=hpux 
       - DIST=hpux 
       - FPM_TARGET=tar 
       - PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
-      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/hpux=/opt/ercole-agent-perl/fetch package/hpux/config.json=/opt/ercole-agent-perl/config.json package/solaris11/ercole-agent-start=/lib/svc/method/ercole-agent-start package/solaris11/ercole-agent.xml=/lib/svc/manifest/site/ercole-agent.xml'
+      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/hpux=/opt/ercole-agent-perl/fetch package/hpux/config.json=/opt/ercole-agent-perl/config.json package/hpux/ercole-agent-perl=/sbin/init.d/ercole-agent-perl'
 
 before_install:
   - if [ -z ${TRAVIS_TAG} ] || [ ${TRAVIS_TAG} == *-* ]; then export VERSION=latest; else export VERSION=${TRAVIS_TAG}; fi
