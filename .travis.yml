@@ -12,7 +12,8 @@ env:
   global:
     - WORKSPACE='/project'
     - PACKAGE_FILE='package-file-not-overriden-:('
-    - ERCOLE_AGENT_PERL_FILES='ercole-agent=/opt/ercole-agent-perl/ercole-agent config=/opt/ercole-agent-perl/config fetch=/opt/ercole-agent-perl/fetch lib=/opt/ercole-agent-perl/lib marshal=/opt/ercole-agent-perl/marshal sql=/opt/ercole-agent-perl/sql'
+    - ERCOLE_AGENT_PERL_FILES='ercole-agent=/opt/ercole-agent-perl/ercole-agent config=/opt/ercole-agent-perl fetch=/opt/ercole-agent-perl lib=/opt/ercole-agent-perl marshal=/opt/ercole-agent-perl sql=/opt/ercole-agent-perl'
+
 jobs:
   include:
     - env: OS=solaris DIST=solaris11 FPM_TARGET=tar PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1 # PACKAGE_BUILD_IMAGE is a stub
