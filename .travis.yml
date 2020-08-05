@@ -12,14 +12,34 @@ env:
   global:
     - WORKSPACE='/project'
     - PACKAGE_FILE='package-file-not-overriden-:('
-    - ERCOLE_AGENT_PERL_FILES='ercole-agent=/opt/ercole-agent-perl/ercole-agent config=/opt/ercole-agent-perl fetch=/opt/ercole-agent-perl lib=/opt/ercole-agent-perl marshal=/opt/ercole-agent-perl sql=/opt/ercole-agent-perl'
+    - ERCOLE_AGENT_PERL_FILES='ercole-agent=/opt/ercole-agent-perl/ercole-agent config=/opt/ercole-agent-perl lib=/opt/ercole-agent-perl marshal=/opt/ercole-agent-perl sql=/opt/ercole-agent-perl'
 
 jobs:
   include:
-    - env: OS=solaris DIST=solaris11 FPM_TARGET=tar PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1 # PACKAGE_BUILD_IMAGE is a stub
-    - env: OS=aix DIST=aix6.1 FPM_TARGET=rpm PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
-    - env: OS=aix DIST=aix6.1 FPM_TARGET=tar PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
-    - env: OS=hpux DIST=hpux FPM_TARGET=tar PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1 # PACKAGE_BUILD_IMAGE is a stub
+    - env: 
+      - OS=solaris 
+      - DIST=solaris11 
+      - FPM_TARGET=tar
+      - PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
+      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/solaris=/opt/ercole-agent-perl/fetch/solaris'
+    - env: 
+      - OS=aix 
+      - DIST=aix6.1 
+      - FPM_TARGET=rpm 
+      - PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
+      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/aix=/opt/ercole-agent-perl/fetch/aix'
+    - env: 
+      - OS=aix 
+      - DIST=aix6.1 
+      - FPM_TARGET=tar 
+      - PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
+      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/aix=/opt/ercole-agent-perl/fetch/aix'
+    - env: 
+      - OS=hpux 
+      - DIST=hpux 
+      - FPM_TARGET=tar 
+      - PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1
+      - ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES='fetch/hpux=/opt/ercole-agent-perl/fetch/hpux'
 
 before_install:
   - if [ -z ${TRAVIS_TAG} ] || [ ${TRAVIS_TAG} == *-* ]; then export VERSION=latest; else export VERSION=${TRAVIS_TAG}; fi
@@ -35,7 +55,7 @@ install:
 script:
   - sed -i "s/\"latest\"/\"${VERSION}\"/" ercole-agent
   - perl -c ercole-agent
-  - docker exec -it package_builder /bin/sh -c "cd ${WORKSPACE} && fpm -p ${PACKAGE_FILE} -n ercole-agent-perl -s dir -t ${FPM_TARGET} -a all --rpm-os ${DIST} --version ${VERSION} --name ercole-agent-perl $ERCOLE_AGENT_PERL_FILES"
+  - docker exec -it package_builder /bin/sh -c "cd ${WORKSPACE} && fpm -p ${PACKAGE_FILE} -n ercole-agent-perl -s dir -t ${FPM_TARGET} -a all --rpm-os ${DIST} --version ${VERSION} --name ercole-agent-perl ${ERCOLE_AGENT_PERL_FILES} ${ERCOLE_AGENT_PERL_PACKAGE_SPECIFIC_FILES}"
   - ls
   - mv ${PACKAGE_FILE} /tmp/dist/
   - tar -tvf /tmp/dist/${PACKAGE_FILE}
