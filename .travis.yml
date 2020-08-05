@@ -12,7 +12,7 @@ env:
   global:
     - WORKSPACE='/project'
     - PACKAGE_FILE='package-file-not-overriden-:('
-
+    - ERCOLE_AGENT_PERL_FILES='ercole-agent=/opt/ercole-agent-perl/ercole-agent config=/opt/ercole-agent-perl/config fetch=/opt/ercole-agent-perl/fetch lib=/opt/ercole-agent-perl/lib marshal=/opt/ercole-agent-perl/marshal sql=/opt/ercole-agent-perl/sql'
 jobs:
   include:
     - env: OS=solaris DIST=solaris11 FPM_TARGET=tar PACKAGE_BUILD_IMAGE=sorintdev/rpmbuild-mugs:0.1 # PACKAGE_BUILD_IMAGE is a stub
@@ -34,9 +34,10 @@ install:
 script:
   - sed -i "s/\"latest\"/\"${VERSION}\"/" ercole-agent
   - perl -c ercole-agent
-  - docker exec -it package_builder /bin/sh -c "cd ${WORKSPACE} && fpm -p ${PACKAGE_FILE} -n ercole-agent -s dir -t ${FPM_TARGET} -a all --rpm-os ${DIST} --version ${VERSION} --name ercole-agent-perl config=/opt/ercole-agent config.json=/opt/ercole-agent/config.json ercole-agent=/opt/ercole-agent/ercole-agent fetch=/opt/ercole-agent lib=/opt/ercole-agent marshal=/opt/ercole-agent sql=/opt/ercole-agent package/aix/ercole-agent=/etc/rc.d/init.d/ercole-agent"
+  - docker exec -it package_builder /bin/sh -c "cd ${WORKSPACE} && fpm -p ${PACKAGE_FILE} -n ercole-agent-perl -s dir -t ${FPM_TARGET} -a all --rpm-os ${DIST} --version ${VERSION} --name ercole-agent-perl $ERCOLE_AGENT_PERL_FILES"
   - ls
   - mv ${PACKAGE_FILE} /tmp/dist/
+  - tar -tvf /tmp/dist/${PACKAGE_FILE}
 
 deploy:
   - provider: script

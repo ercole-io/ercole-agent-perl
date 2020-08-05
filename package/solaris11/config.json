@@ -1,0 +1,14 @@
+{
+    "hostname": "default",
+    "envtype": "PROD",
+    "location": "Germany",
+    "serverurl": "http://127.0.0.1:8080",
+    "serverusr": "user",
+    "serverpsw": "password",
+    "frequency": 24,
+    "forcestats": false,
+    "EnableServerValidation": false,
+    "oratab": "/var/opt/oracle/oratab",
+    "AWR": 30,
+    "UseCurl": true
+}
