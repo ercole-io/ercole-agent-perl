@@ -1,0 +1,99 @@
+#!/bin/sh
+
+# Copyright (c) 2019 Sorint.lab S.p.A.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+HOSTNAME=$(hostname)
+KERNEL=$(uname -s)
+KERNEL_VERSION=$(uname -r)
+
+OS=HPUX11i
+OS_VERSION=$(/usr/sbin/swlist | grep HPUX11i | awk '{ print $1 }')
+CPU_MODEL=$(/usr/contrib/bin/machinfo |grep -i processor| head -1)
+CPU_SPEED=$(/usr/contrib/bin/machinfo |grep -i processor| head -1 | perl -pe 's/.*\(([\d]+(.[\d+])? (GHz|MHz)),.*/$1/g')
+
+SWP_TOTAL=$(($(swapinfo -M| tail -1| awk '{print $3}')/1024/1024))
+MEM_TOTAL=$(/usr/contrib/bin/machinfo | grep "Memory"| awk '{print $4}'| awk  -F "(" '{print $2}')
+
+if [ "$(model | grep -i virtual | wc -l)" -gt 0 ]; then
+  CPU_THREAD=$(/etc/ioscan -fnk | grep proc | wc -l)
+  CPU_CORES=$(($CPU_THREAD/2))
+  SOCKET=1
+  CORES_PER_SOCKET=$CPU_CORES
+  THREADS_PER_CORE=2
+else 
+  DIVISO=$(/usr/contrib/bin/machinfo | grep -i processor | grep logical | awk '{print $4}' | awk -F "(" '{print $2}')
+  CPU_THREAD=$(/usr/contrib/bin/machinfo | grep -i processor | grep logical | awk '{print $1}')
+  CPU_CORES=$(($CPU_THREAD/2))
+  SOCKET=$(($CPU_THREAD / $DIVISO))
+  CORES_PER_SOCKET=$DIVISO
+  THREADS_PER_CORE=2
+fi
+
+CHECK_SUN_CLUSTER=$(ps -ef | grep -v grep | grep rpc.pmfd|wc -l)
+if [ "$CHECK_SUN_CLUSTER" = 1 ]; then
+  SUN_CLUSTER=Y
+else
+  SUN_CLUSTER=N
+fi
+
+CHECK_VERITAS_CLUSTER=$(ps -ef | grep -v grep | grep had|wc -l)
+if [ "$CHECK_VERITAS_CLUSTER" = 1 ]; then
+  VERITAS_CLUSTER=Y
+else
+  VERITAS_CLUSTER=N
+fi
+
+CHECK_ORACLE_CLUSTER=$(ps -ef | grep -v grep | grep crsd|wc -l)
+if [ "$CHECK_ORACLE_CLUSTER" -gt 0 ]; then
+  ORACLE_CLUSTER=Y
+else
+  ORACLE_CLUSTER=N
+fi
+
+CHECK_TYPE_SERVER_VMWARE=$(/etc/dmesg | grep VMware | wc -l)
+CHECK_TYPE_SERVER_HPVIRT=$(model| grep -i virtual|wc -l)
+
+if [ "$CHECK_TYPE_SERVER_VMWARE" -gt 0 ]; then
+  TYPE=VMWARE
+  VIRTUAL=Y
+elif [ "$CHECK_TYPE_SERVER_HPVIRT" -gt 0 ]; then
+  TYPE=HPVRT
+  VIRTUAL=Y
+else
+  TYPE=PH
+  VIRTUAL=N
+fi
+
+echo "hostname: $HOSTNAME
+cpumodel: $CPU_MODEL
+cputhreads: $CPU_THREAD
+cpucores: $CPU_CORES
+cpufrequency: $CPU_SPEED MHz
+cpusockets: $SOCKET
+threadspercore: $THREADS_PER_CORE
+corespersocket: $CORES_PER_SOCKET
+type: $TYPE
+virtual: $VIRTUAL
+kernel: $KERNEL
+kernelversion: $KERNEL_VERSION
+os: $OS
+osversion: $OS_VERSION
+memorytotal: $MEM_TOTAL
+swaptotal: $SWP_TOTAL
+oraclecluster: $ORACLE_CLUSTER
+veritascluster: $VERITAS_CLUSTER
+suncluster: $SUN_CLUSTER
+aixcluster: N" 

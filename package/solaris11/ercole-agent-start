@@ -1,3 +1,0 @@
-#!/bin/sh
-cd /opt/ercole-agent
-su - oracle -c "/bin/sh -c 'cd /opt/ercole-agent && nohup ./ercole-agent &'"
