@@ -26,7 +26,7 @@ If ercole-agent crashes when fetching something, execute the fetch manually with
 
 **Desktop (please complete the following information):**
  - OS: [e.g. solaris11]
- - perl version: [e.gh 5.8.8]
+ - perl version (perl -v): [e.g 5.8.8]
  - ercole-agent-perl version: [e.g. 2.0.2 or 16719f8143e945c4d55783dd205279e62f8f4725]  
  - ercole version (if relevant): [e.g. 2.0.2 or 16719f8143e945c4d55783dd205279e62f8f4725]  
  - affected technologies versions (if relevant): [e.g. 19.0.0.0, 2019] 
