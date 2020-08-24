@@ -23,8 +23,8 @@ if [ -z "$ORATAB" ]; then
 fi
 
 if [ ! -r "$ORATAB" ]; then
-  >&2 echo "The file $ORATAB isn't readable"
   exit 0
 fi
+
 
 sed 's/#.*$//' $ORATAB | grep -v "^$" | grep "^\s*[A-Za-z0-9].*\s*\:" || true
