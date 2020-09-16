@@ -44,7 +44,6 @@ use addms;
 use segmentadvisors;
 use psu;
 use backup;
-use LWP;
 use MIME::Base64;
 use common;
  
@@ -235,7 +234,8 @@ sub sendData { #to test if success
 		print "\n";
 		marshal::logPrintln("Hostdata sent!");
 	} else {
-		# use lib "./lib/URI";
+		use lib "./lib/URI" ;
+		use LWP;
 		my $client = LWP::UserAgent->new;
 
 		# Disable certificate validation if enableServerValidation is false
