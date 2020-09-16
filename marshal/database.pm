@@ -35,7 +35,7 @@ sub Database {
         my ($name, $uniqueName, $instanceNumber, $instanceName, $status, $version, 
             $platform, $archiveLog, $charset, $ncharset, $blockSize, 
             $cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize, 
-            $segmentsSize, $datafileSize, $allocated, $elapsed, $dbtime, $dailycpuusage, $work, $asm, $dataguard) = split /\|\|\|/, $line;
+            $segmentsSize, $datafileSize, $allocable, $elapsed, $dbtime, $dailycpuusage, $work, $asm, $dataguard) = split /\|\|\|/, $line;
         $name=trim($name);
         $uniqueName=trim($uniqueName);
         $instanceNumber=parseInt(trim($instanceNumber));
@@ -54,7 +54,7 @@ sub Database {
         $sgaMaxSize=parseNumber(trim($sgaMaxSize));
         $segmentsSize=parseNumber(trim($segmentsSize));
         $datafileSize=parseNumber(trim($datafileSize));
-        $allocated=parseNumber(trim($allocated));
+        $allocable=parseNumber(trim($allocable));
         $elapsed=parseNullableNumber(trim($elapsed));
         $dailycpuusage=parseNullableNumber(trim($dailycpuusage));
         $dbtime=parseNullableNumber(trim($dbtime));
@@ -88,7 +88,7 @@ sub Database {
         $db{'sgaMaxSize'} = $sgaMaxSize;
         $db{'segmentsSize'} = $segmentsSize;
         $db{'datafileSize'} = $datafileSize;
-        $db{'allocated'} = $allocated;
+        $db{'allocable'} = $allocable;
         $db{'elapsed'} = $elapsed;
         $db{'dbTime'} = $dbtime;
         $db{'dailyCPUUsage'} = $dailycpuusage;
