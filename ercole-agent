@@ -120,6 +120,14 @@ sub buildData { #OK
 					my @pdbs = marshal::ListPDBs($out); #OK
 
 					for (my $i = 0; $i<scalar(@pdbs); $i++) {
+
+						if ($pdbs[$i]{"status"} eq "MOUNTED"){
+							$pdbs[$i]{"tablespaces"} = [];
+							$pdbs[$i]{"schemas"} = [];
+
+							next;
+						}
+
 						$out = fetcher("tablespace_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
 						$pdbs[$i]{"tablespaces"} = marshal::Tablespaces($out); #OK
 						
