@@ -47,27 +47,28 @@ use backup;
 use LWP;
 use MIME::Base64;
 use common;
- 
+
 my $version = "latest";
 my $hostDataSchemaVersion = 1;
 
 
 sub main {
     my %configuration = config::ReadConfig(); #ok
- 
-	while (1) {
-    	buildData(%configuration); #ok
-  		sleep(3600 * $configuration{'frequency'});
-	}
+
+    while (1) {
+        buildData(%configuration); #ok
+        sleep(3600 * $configuration{'frequency'});
+    }
 
 }
+
 
 sub buildData { #OK
     my %configuration = @_;
     my $out = fetcher("host", "", "X"); #ok
     my %info = marshal::Host($out); #ok
     my %clusterMembershipStatus = marshal::ClusterMembershipStatus($out); #ok
-	my %db;
+    my %db;
 
     $out = fetcher("filesystem", "", "X"); #ok
     my @filesystems = marshal::Filesystems($out); #array of hashes' address, ok
@@ -79,232 +80,238 @@ sub buildData { #OK
     $out = fetcher("running-databases"); #ok
     my @runningDBs = marshal::RunningDatabases($out); #array of running dbs
 
-	my @runningUnlistedDatabases = ();
+    my @runningUnlistedDatabases = ();
 
-	foreach my $runningDB (@runningDBs) {
-		my $found = 0;
-		foreach my $db (@dbs) {
-			my %dbEntry = %$db;
-			if ($dbEntry{"dbName"} eq $runningDB) {
-				$found = 1;
-				last if 1;
-			}
-		}	
-		if ($found == 0) {
-			push (@runningUnlistedDatabases, $runningDB); #OK
-		}
-	}
-	$db{"unlistedRunningDatabases"} = \@runningUnlistedDatabases;
-	
-	my @databases;
+    foreach my $runningDB (@runningDBs) {
+        my $found = 0;
+        foreach my $db (@dbs) {
+            my %dbEntry = %$db;
+            if ($dbEntry{"dbName"} eq $runningDB) {
+                $found = 1;
+                last if 1;
+            }
+        }
+        if ($found == 0) {
+            push (@runningUnlistedDatabases, $runningDB); #OK
+        }
+    }
+    $db{"unlistedRunningDatabases"} = \@runningUnlistedDatabases;
+
+    my @databases;
 
     foreach my $db (@dbs){
         my %dbEntry = %$db;
         my $dbStatus = fetchDbStatus($dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #OPEN
 
         if ($dbStatus =~ m/OPEN/) {
-			my %database;
-			my $outVersion = fetcher("dbversion", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-        	my ($dbVersion, $b, $c, $d) = split /\./, $outVersion;
-			
-			$out = fetcher("db", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $configuration{'AWR'});
-			%database = marshal::Database($out); #OK 
+            my %database;
+            my $outVersion = fetcher("dbversion", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+            my ($dbVersion, $b, $c, $d) = split /\./, $outVersion;
+
+            $out = fetcher("db", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $configuration{'AWR'});
+            %database = marshal::Database($out); #OK
 
 
-			if ($dbVersion > 11 || ($dbVersion == 11 && $b >= 2)) {
-				my $out = marshal::trim(fetcher("checkpdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}));
-				$database{'isCDB'} = marshal::parseBool($out);
-				
-				if ($out eq "TRUE") {
-					$out = fetcher("listpdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-					my @pdbs = marshal::ListPDBs($out); #OK
+            if ($dbVersion > 11 || ($dbVersion == 11 && $b >= 2)) {
+                my $out = marshal::trim(fetcher("checkpdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}));
+                $database{'isCDB'} = marshal::parseBool($out);
 
-					for (my $i = 0; $i<scalar(@pdbs); $i++) {
+                if ($out eq "TRUE") {
+                    $out = fetcher("listpdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+                    my @pdbs = marshal::ListPDBs($out); #OK
 
-						if ($pdbs[$i]{"status"} eq "MOUNTED"){
-							$pdbs[$i]{"tablespaces"} = [];
-							$pdbs[$i]{"schemas"} = [];
+                    for (my $i = 0; $i<scalar(@pdbs); $i++) {
 
-							next;
-						}
+                        if ($pdbs[$i]{"status"} eq "MOUNTED"){
+                            $pdbs[$i]{"tablespaces"} = [];
+                            $pdbs[$i]{"schemas"} = [];
 
-						$out = fetcher("tablespace_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
-						$pdbs[$i]{"tablespaces"} = marshal::Tablespaces($out); #OK
-						
-						$out = fetcher("schema_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
-						$pdbs[$i]{"schemas"} = marshal::Schemas($out); #OK
-					}
+                            next;
+                        }
 
-					$database{'pdbs'} = \@pdbs;
-				} else {
-					$database{'pdbs'} = [];
-				}
-			} else {
-				$db{'isCDB'} = marshal::parseBool("FALSE");
-				$database{'pdbs'} = [];
-			}
+                        $out = fetcher("tablespace_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
+                        $pdbs[$i]{"tablespaces"} = marshal::Tablespaces($out); #OK
 
-			if ($configuration{'forcestats'}) { #true, ok
-				fetcher("stats", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #Update db stats
-			}
+                        $out = fetcher("schema_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
+                        $pdbs[$i]{"schemas"} = marshal::Schemas($out); #OK
+                    }
 
-			$out = fetcher("tablespace", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-			$database{'tablespaces'} = marshal::Tablespaces($out); #OK
-			
-			$out = fetcher("schema", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-			$database{'schemas'} = marshal::Schemas($out); #OK
+                    $database{'pdbs'} = \@pdbs;
+                } else {
+                    $database{'pdbs'} = [];
+                }
+            } else {
+                $db{'isCDB'} = marshal::parseBool("FALSE");
+                $database{'pdbs'} = [];
+            }
 
-			$out = fetcher("patch", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"}); #empty, OK
-			$database{'patches'} = marshal::Patches($out); #OK
+            if ($configuration{'forcestats'}) { #true, ok
+                fetcher("stats", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #Update db stats
+            }
 
-			$out = fetcher("opt", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"});
-			$database{'featureUsageStats'} = marshal::FeatureUsageStats($out); #OK 
+            $out = fetcher("tablespace", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+            $database{'tablespaces'} = marshal::Tablespaces($out); #OK
 
-			$out = fetcher("license",$dbEntry{"dbName"}, $dbVersion, $info{'hardwareAbstractionTechnology'}, $dbEntry{"oracleHome"});
-			$database{'licenses'} = marshal::Licenses($out); #OK
-			
-			$out = fetcher("addm", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-			if ($out =~ m/Diagnostic Package License is needed for using this feature./) {
-				marshal::logPrintln("Detected Diagnostic Package License is needed for using this feature error. Ignored!");
-				$database{'addms'} = (); 
-			} else {
-				$database{'addms'} = marshal::Addms($out); #OK 
-			}
+            $out = fetcher("schema", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+            $database{'schemas'} = marshal::Schemas($out); #OK
 
-			$out = fetcher("segmentadvisor", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-			$database{'segmentAdvisors'} = marshal::SegmentAdvisor($out); #OK 
+            $out = fetcher("patch", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"}); #empty, OK
+            $database{'patches'} = marshal::Patches($out); #OK
 
-			$out = fetcher("psu", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"});
-			$database{'psus'} = marshal::PSU($out); #OK 
+            $out = fetcher("opt", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"});
+            $database{'featureUsageStats'} = marshal::FeatureUsageStats($out); #OK
 
-			$out = fetcher("backup", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-			if ($out =~ m/unable to extend temp segment/) {
-				marshal::logPrintln("Detected unable to extend temp segment error. Ignored!");
-				$database{'backups'}=();
-			} else {
-				$database{'backups'} = marshal::Backups($out); #OK 
-			}
+            $out = fetcher("license",$dbEntry{"dbName"}, $dbVersion, $info{'hardwareAbstractionTechnology'}, $dbEntry{"oracleHome"});
+            $database{'licenses'} = marshal::Licenses($out); #OK
 
-			push (@databases, {%database}); #OK
-			
-		} elsif ($dbStatus =~ m/MOUNTED/) {
-			$out = fetcher("dbmounted", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-			my %database = marshal::Database($out); #should work, test with db not open
-			push (@databases, {%database}); #should work, test with db not open
-		}
+            $out = fetcher("addm", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+            if ($out =~ m/Diagnostic Package License is needed for using this feature./) {
+                marshal::logPrintln("Detected Diagnostic Package License is needed for using this feature error. Ignored!");
+                $database{'addms'} = ();
+            } else {
+                $database{'addms'} = marshal::Addms($out); #OK
+            }
+
+            $out = fetcher("segmentadvisor", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+            $database{'segmentAdvisors'} = marshal::SegmentAdvisor($out); #OK
+
+            $out = fetcher("psu", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"});
+            $database{'psus'} = marshal::PSU($out); #OK
+
+            $out = fetcher("backup", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+            if ($out =~ m/unable to extend temp segment/) {
+                marshal::logPrintln("Detected unable to extend temp segment error. Ignored!");
+                $database{'backups'}=();
+            } else {
+                $database{'backups'} = marshal::Backups($out); #OK
+            }
+
+            push (@databases, {%database}); #OK
+
+        } elsif ($dbStatus =~ m/MOUNTED/) {
+            $out = fetcher("dbmounted", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+            my %database = marshal::Database($out); #should work, test with db not open
+            push (@databases, {%database}); #should work, test with db not open
+        }
     }
 
-	my %hostData;
-	
-	$db{"databases"} = \@databases;
-	my %oracle;
-	$oracle{"database"} = \%db;
+    my %hostData;
 
-	my %features;
-	$features{'oracle'} = \%oracle;
+    $db{"databases"} = \@databases;
+    my %oracle;
+    $oracle{"database"} = \%db;
 
-	$hostData{'hostname'} = $info{'hostname'};
-	#override host name with the one in config if != default
-	if ($configuration{'hostname'} ne "default") {
-		$hostData{'hostname'} = $configuration{'hostname'};
-	}
-	$hostData{'location'} = $configuration{'location'};	
-	$hostData{'environment'} = $configuration{'envtype'};
-	$hostData{'tags'}=[];
-	$hostData{'agentVersion'} = $version;
-	$hostData{'schemaVersion'} = $hostDataSchemaVersion;
-	$hostData{'info'} = \%info;
-	$hostData{'clusterMembershipStatus'} = \%clusterMembershipStatus;
-	$hostData{'features'} = \%features;
-	$hostData{'filesystems'} = \@filesystems;
+    my %features;
+    $features{'oracle'} = \%oracle;
 
-	sendData(\%hostData, \%configuration);
+    $hostData{'hostname'} = $info{'hostname'};
+
+    #override host name with the one in config if != default
+    if ($configuration{'hostname'} ne "default") {
+        $hostData{'hostname'} = $configuration{'hostname'};
+    }
+    $hostData{'location'} = $configuration{'location'};
+    $hostData{'environment'} = $configuration{'envtype'};
+    $hostData{'tags'}=[];
+    $hostData{'agentVersion'} = $version;
+    $hostData{'schemaVersion'} = $hostDataSchemaVersion;
+    $hostData{'info'} = \%info;
+    $hostData{'clusterMembershipStatus'} = \%clusterMembershipStatus;
+    $hostData{'features'} = \%features;
+    $hostData{'filesystems'} = \@filesystems;
+
+    sendData(\%hostData, \%configuration);
 }
+
 
 sub sendData { #to test if success
-	no warnings 'uninitialized';
+    no warnings 'uninitialized';
     my ($d, $c) = @_;
 
-	my %data = %$d;
-	my %configuration = %$c;
+    my %data = %$d;
+    my %configuration = %$c;
 
-	marshal::logPrintln("Sending data...");
+    marshal::logPrintln("Sending data...");
 
-	my $b = JSON::PP::encode_json(\%data);
-	marshal::logPrintln("Data: " . $b);
+    my $b = JSON::PP::encode_json(\%data);
+    marshal::logPrintln("Data: " . $b);
 
-	if ($configuration{'UseCurl'} eq 'true') { #true, ok
-		marshal::logPrintln("Sending data with curl");
-		if ($configuration{'EnableServerValidation'} eq "false"){
-			system("curl", "-H", "Content-Type: application/json", "-u", $configuration{'serverusr'}.":".$configuration{'serverpsw'}, "-d", $b, "-w", "StatusCode: %{http_code}",, $configuration{'serverurl'});
-		} else {
-			system("curl", "-insecure", "-H", "Content-Type: application/json", "-u", $configuration{'serverusr'}.":".$configuration{'serverpsw'}, "-d", $b, "-w", "StatusCode: %{http_code}",, $configuration{'serverurl'});
-		}
-		print "\n";
-		marshal::logPrintln("Hostdata sent!");
-	} else {
-		# use lib "./lib/URI";
-		my $client = LWP::UserAgent->new;
+    if ($configuration{'UseCurl'} eq 'true') { #true, ok
+        marshal::logPrintln("Sending data with curl");
+        if ($configuration{'EnableServerValidation'} eq "false"){
+            system("curl", "-H", "Content-Type: application/json", "-u", $configuration{'serverusr'}.":".$configuration{'serverpsw'}, "-d", $b, "-w", "StatusCode: %{http_code}",, $configuration{'serverurl'});
+        } else {
+            system("curl", "-insecure", "-H", "Content-Type: application/json", "-u", $configuration{'serverusr'}.":".$configuration{'serverpsw'}, "-d", $b, "-w", "StatusCode: %{http_code}",, $configuration{'serverurl'});
+        }
+        print "\n";
+        marshal::logPrintln("Hostdata sent!");
+    } else {
 
-		# Disable certificate validation if enableServerValidation is false
-		# if ($configuration{'EnableServerValidation'} eq "false"){
-		# 	$client->ssl_opts(verify_hostname => 0);	
-		# }
+        # use lib "./lib/URI";
+        my $client = LWP::UserAgent->new;
 
-		my $auth = $configuration{'serverusr'}.":".$configuration{'serverpsw'};
-		my $authEnc = encode_base64($auth);
-		
-		my $headers = HTTP::Headers->new;
-		$headers->header('Content-Type' => 'application/json');
-		$headers->header('Authorization' => 'Basic '.$authEnc);
+        # Disable certificate validation if enableServerValidation is false
+        # if ($configuration{'EnableServerValidation'} eq "false"){
+        # 	$client->ssl_opts(verify_hostname => 0);
+        # }
 
-		my $url = $configuration{'serverurl'};
-		
-		my $req = HTTP::Request->new( 'POST', $url, $headers, $b);
+        my $auth = $configuration{'serverusr'}.":".$configuration{'serverpsw'};
+        my $authEnc = encode_base64($auth);
 
-		my $response = $client->request( $req );
-		
-		my $sendResult = "FAILED";
+        my $headers = HTTP::Headers->new;
+        $headers->header('Content-Type' => 'application/json');
+        $headers->header('Authorization' => 'Basic '.$authEnc);
 
-		marshal::getTime();
+        my $url = $configuration{'serverurl'};
 
-		if ($response->is_success) {
-			print STDERR "Response status: ". $response->status_line. "\n";
-			if ($response->status_line eq '200 OK') {
-				$sendResult = "SUCCESS";
-			}
-		} else {
-			print STDERR "Error sending data: ". $response->status_line . "\n";
-		}
+        my $req = HTTP::Request->new( 'POST', $url, $headers, $b);
 
-		marshal::logPrintln("Sending result: ".$sendResult);
-	}
+        my $response = $client->request( $req );
+
+        my $sendResult = "FAILED";
+
+        marshal::getTime();
+
+        if ($response->is_success) {
+            print STDERR "Response status: ". $response->status_line. "\n";
+            if ($response->status_line eq '200 OK') {
+                $sendResult = "SUCCESS";
+            }
+        } else {
+            print STDERR "Error sending data: ". $response->status_line . "\n";
+        }
+
+        marshal::logPrintln("Sending result: ".$sendResult);
+    }
 
 }
+
 
 sub fetcher {
     no warnings 'uninitialized';
     my ($fetcherName, $param1, $param2, $param3, $param4) = @_;
 
-	marshal::logPrintln("Fetching ".$fetcherName." ".$param1." ".$param2." ".$param3." ".$param4);
+    marshal::logPrintln("Fetching ".$fetcherName." ".$param1." ".$param2." ".$param3." ".$param4);
     my $baseDir = config::getBaseDir();
-    	
+
     my $cmd = $baseDir."/fetch/$^O/".$fetcherName;
     my $out = qx/$cmd $param1 $param2 $param3 $param4/; #cmd execution
 
-	return $out;
+    return $out;
 }
+
 
 sub fetchDbStatus {
     no warnings 'uninitialized';
     my ($sid, $oracleHome) = @_;
-	marshal::logPrintln("Fetching db status ".$sid . " " . $oracleHome);
+    marshal::logPrintln("Fetching db status ".$sid . " " . $oracleHome);
     my $baseDir = config::getBaseDir();
-        
-	my $cmd = $baseDir."/fetch/$^O/dbstatus";
+
+    my $cmd = $baseDir."/fetch/$^O/dbstatus";
     my $out = qx/$cmd $sid $oracleHome/ or die "UNREACHABLE"; #cmd execution
 
     return $out;
 }
+
 
 main();
