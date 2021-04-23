@@ -1,9 +1,14 @@
 !_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
 !_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
-!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
-!_TAG_PROGRAM_NAME	Exuberant Ctags	//
-!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+!_TAG_OUTPUT_EXCMD	number	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/cirelli/Projects/open-mind/ercole-agent-perl/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	/p5.9.20210110.0/
 AUTOLOAD	lib/HTTP/HTTP/Message.pm	526;"	s
 AUTOLOAD	lib/HTTP/Net/LDAP/Constant.pm	49;"	s
 AUTOLOAD	lib/HTTP/Net/LDAP/DSML.pm	662;"	s
@@ -546,6 +551,7 @@ LWP::UserAgent::use_alarm	lib/HTTP/LWP/UserAgent.pm	801;"	s
 LWP::UserAgent::use_eval	lib/HTTP/LWP/UserAgent.pm	800;"	s
 LWP::Version	lib/HTTP/LWP.pm	4;"	s
 Licenses	marshal/licenses.pm	27;"	s
+ListPDBs	marshal/listpdb.pm	28;"	s
 MY_COUNTRY	lib/URI/URI/Heuristic.pm	98;"	s
 Net	lib/HTTP/Net/LDAP/Constant.pm	62;"	s
 Net	lib/HTTP/Net/LDAP/Constant.pm	80;"	s
@@ -993,6 +999,7 @@ P_SPACE_BEFORE	lib/JSON/PP.pm	30;"	c
 P_UTF8	lib/JSON/PP.pm	27;"	c
 Patches	marshal/patches.pm	26;"	s
 ReadConfig	config/config.pm	28;"	s
+RunningDatabases	marshal/oratab.pm	46;"	s
 SKEW	lib/URI/URI/_punycode.pm	19;"	c
 STORABLE_freeze	lib/HTTP/URI.pm	285;"	s
 STORABLE_freeze	lib/URI/URI.pm	341;"	s
@@ -1576,7 +1583,7 @@ blessed_to_json	lib/JSON/PP.pm	552;"	s
 blocking	lib/HTTP/Net/HTTPS.pm	57;"	s
 boolean_values	lib/JSON/PP.pm	199;"	s
 boundary	lib/HTTP/HTTP/Request/Common.pm	284;"	s
-buildData	ercole-agent	65;"	s
+buildData	ercole-agent	67;"	s
 callback	lib/HTTP/Net/LDAP/Message.pm	222;"	s
 can	lib/URI/URI/WithBase.pm	56;"	s
 can_read	lib/HTTP/LWP/Protocol/http.pm	432;"	s
@@ -1779,8 +1786,8 @@ extension	lib/HTTP/Net/LDAP.pm	729;"	s
 extensions	lib/URI/URI/_ldap.pm	74;"	s
 extract_cookies	lib/HTTP/HTTP/Cookies.pm	182;"	s
 false	lib/JSON/PP.pm	1501;"	s
-fetchDbStatus	ercole-agent	242;"	s
-fetcher	ercole-agent	229;"	s
+fetchDbStatus	ercole-agent	318;"	s
+fetcher	ercole-agent	299;"	s
 file	lib/URI/URI/file.pm	93;"	s
 file	lib/URI/URI/file/Base.pm	74;"	s
 file	lib/URI/URI/file/Mac.pm	44;"	s
@@ -1818,6 +1825,7 @@ get	lib/HTTP/LWP/Simple.pm	46;"	s
 get	lib/HTTP/LWP/UserAgent.pm	412;"	s
 get	lib/HTTP/Net/LDAP/Entry.pm	104;"	s
 getBaseDir	config/config.pm	77;"	s
+getTime	logger/logger.pm	45;"	s
 getTime	marshal/common.pm	146;"	s
 get_	lib/JSON/PP.pm	93;"	s
 get_attribute	lib/HTTP/Net/LDAP/Entry.pm	98;"	s
@@ -1947,14 +1955,17 @@ load_cookie	lib/HTTP/HTTP/Cookies/Microsoft.pm	122;"	s
 load_cookies_from_file	lib/HTTP/HTTP/Cookies/Microsoft.pm	12;"	s
 local_path	lib/URI/URI/URL.pm	169;"	s
 logPrintln	marshal/common.pm	137;"	s
+logger	logger/logger.pm	18;"	p
+logger::getTime	logger/logger.pm	45;"	s
+logger::printLn	logger/logger.pm	27;"	s
 mac_path	lib/URI/URI/URL.pm	172;"	s
 main	ercole-agent	18;"	p
-main	ercole-agent	55;"	s
-main::buildData	ercole-agent	65;"	s
-main::fetchDbStatus	ercole-agent	242;"	s
-main::fetcher	ercole-agent	229;"	s
-main::main	ercole-agent	55;"	s
-main::sendData	ercole-agent	169;"	s
+main	ercole-agent	56;"	s
+main::buildData	ercole-agent	67;"	s
+main::fetchDbStatus	ercole-agent	318;"	s
+main::fetcher	ercole-agent	299;"	s
+main::main	ercole-agent	56;"	s
+main::sendData	ercole-agent	228;"	s
 marshal	marshal/addms.pm	18;"	p
 marshal	marshal/backup.pm	18;"	p
 marshal	marshal/cluster_membership_status.pm	18;"	p
@@ -1964,6 +1975,7 @@ marshal	marshal/feature_usage_stats.pm	18;"	p
 marshal	marshal/filesystems.pm	18;"	p
 marshal	marshal/host.pm	18;"	p
 marshal	marshal/licenses.pm	18;"	p
+marshal	marshal/listpdb.pm	18;"	p
 marshal	marshal/oratab.pm	18;"	p
 marshal	marshal/patches.pm	18;"	p
 marshal	marshal/psu.pm	18;"	p
@@ -1978,9 +1990,11 @@ marshal::FeatureUsageStats	marshal/feature_usage_stats.pm	26;"	s
 marshal::Filesystems	marshal/filesystems.pm	30;"	s
 marshal::Host	marshal/host.pm	28;"	s
 marshal::Licenses	marshal/licenses.pm	27;"	s
+marshal::ListPDBs	marshal/listpdb.pm	28;"	s
 marshal::Oratab	marshal/oratab.pm	27;"	s
 marshal::PSU	marshal/psu.pm	28;"	s
 marshal::Patches	marshal/patches.pm	26;"	s
+marshal::RunningDatabases	marshal/oratab.pm	46;"	s
 marshal::Schemas	marshal/schemas.pm	27;"	s
 marshal::SegmentAdvisor	marshal/segmentadvisors.pm	28;"	s
 marshal::Tablespaces	marshal/tablespaces.pm	28;"	s
@@ -2136,6 +2150,7 @@ pretty	lib/JSON/PP.pm	164;"	s
 previous	lib/HTTP/HTTP/Response.pm	63;"	s
 previousDN	lib/HTTP/Net/LDAP/Control/EntryChange.pm	42;"	s
 print	lib/HTTP/Net/LDAP/Filter.pm	238;"	s
+printLn	logger/logger.pm	27;"	s
 print_on	lib/URI/URI/URL.pm	52;"	s
 process	lib/HTTP/Net/LDAP.pm	823;"	s
 product_tokens	lib/HTTP/HTTP/Daemon.pm	67;"	s
@@ -2239,7 +2254,7 @@ secure	lib/URI/URI/sips.pm	13;"	s
 secure	lib/URI/URI/snews.pm	13;"	s
 secure	lib/URI/URI/ssh.pm	15;"	s
 selector	lib/URI/URI/gopher.pm	67;"	s
-sendData	ercole-agent	169;"	s
+sendData	ercole-agent	228;"	s
 send_basic_header	lib/HTTP/HTTP/Daemon.pm	415;"	s
 send_crlf	lib/HTTP/HTTP/Daemon.pm	408;"	s
 send_dir	lib/HTTP/HTTP/Daemon.pm	573;"	s

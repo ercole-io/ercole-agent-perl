@@ -26,8 +26,8 @@ use lib "./lib/HTTP";
 
 use PP;
 use lib "./config";
-use config;
 use lib "./marshal";
+use config;
 use common;
 use host;
 use cluster_membership_status;
@@ -46,7 +46,8 @@ use psu;
 use backup;
 use LWP;
 use MIME::Base64;
-use common;
+use lib "./logger";
+use logger;
 
 my $version = "latest";
 my $hostDataSchemaVersion = 1;
@@ -54,12 +55,12 @@ my $hostDataSchemaVersion = 1;
 
 sub main {
     my %configuration = config::ReadConfig(); #ok
+    $logger::logDirectory = $configuration{'LogDirectory'};
 
     while (1) {
-        buildData(%configuration); #ok
+        buildData(%configuration);
         sleep(3600 * $configuration{'frequency'});
     }
-
 }
 
 
@@ -166,7 +167,7 @@ sub buildData { #OK
 
             $out = fetcher("addm", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             if ($out =~ m/Diagnostic Package License is needed for using this feature./) {
-                marshal::logPrintln("Detected Diagnostic Package License is needed for using this feature error. Ignored!");
+                logger::printLn("Detected Diagnostic Package License is needed for using this feature error. Ignored!");
                 $database{'addms'} = ();
             } else {
                 $database{'addms'} = marshal::Addms($out); #OK
@@ -180,7 +181,7 @@ sub buildData { #OK
 
             $out = fetcher("backup", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             if ($out =~ m/unable to extend temp segment/) {
-                marshal::logPrintln("Detected unable to extend temp segment error. Ignored!");
+                logger::printLn("Detected unable to extend temp segment error. Ignored!");
                 $database{'backups'}=();
             } else {
                 $database{'backups'} = marshal::Backups($out); #OK
@@ -231,20 +232,30 @@ sub sendData { #to test if success
     my %data = %$d;
     my %configuration = %$c;
 
-    marshal::logPrintln("Sending data...");
+    logger::printLn("Sending data...");
+
 
     my $b = JSON::PP::encode_json(\%data);
-    marshal::logPrintln("Data: " . $b);
+    logger::printLn("Data:\n" . $b);
 
-    if ($configuration{'UseCurl'} eq 'true') { #true, ok
-        marshal::logPrintln("Sending data with curl");
+    if ($configuration{'UseCurl'} eq 'true') {
+        logger::printLn("Sending data with curl");
+
+        my $command = "curl \\
+            -H 'Content-Type: application/json' \\
+            -u '$configuration{'serverusr'}':'$configuration{'serverpsw'}' \\
+            -d '$b' \\
+            -w 'StatusCode: %{http_code}' \\
+            $configuration{'serverurl'}/hosts";
+
         if ($configuration{'EnableServerValidation'} eq "false"){
-            system("curl", "-H", "Content-Type: application/json", "-u", $configuration{'serverusr'}.":".$configuration{'serverpsw'}, "-d", $b, "-w", "StatusCode: %{http_code}",, $configuration{'serverurl'});
-        } else {
-            system("curl", "-insecure", "-H", "Content-Type: application/json", "-u", $configuration{'serverusr'}.":".$configuration{'serverpsw'}, "-d", $b, "-w", "StatusCode: %{http_code}",, $configuration{'serverurl'});
+            $command = $command . " --insecure";
         }
-        print "\n";
-        marshal::logPrintln("Hostdata sent!");
+
+        my $out = `$command  2>&1`;
+        logger::printLn($out);
+        logger::printLn("Hostdata sent!");
+
     } else {
 
         # use lib "./lib/URI";
@@ -270,20 +281,18 @@ sub sendData { #to test if success
 
         my $sendResult = "FAILED";
 
-        marshal::getTime();
-
         if ($response->is_success) {
-            print STDERR "Response status: ". $response->status_line. "\n";
+            logger::printLn("Response status: ". $response->status_line. "\n");
+            logger::printLn();
             if ($response->status_line eq '200 OK') {
                 $sendResult = "SUCCESS";
             }
         } else {
-            print STDERR "Error sending data: ". $response->status_line . "\n";
+            logger::printLn("Error sending data: ". $response->status_line . "\n");
         }
 
-        marshal::logPrintln("Sending result: ".$sendResult);
+        logger::printLn("Sending result: ".$sendResult);
     }
-
 }
 
 
@@ -291,11 +300,16 @@ sub fetcher {
     no warnings 'uninitialized';
     my ($fetcherName, $param1, $param2, $param3, $param4) = @_;
 
-    marshal::logPrintln("Fetching ".$fetcherName." ".$param1." ".$param2." ".$param3." ".$param4);
+    logger::printLn("Fetching ".$fetcherName." ".$param1." ".$param2." ".$param3." ".$param4);
     my $baseDir = config::getBaseDir();
 
     my $cmd = $baseDir."/fetch/$^O/".$fetcherName;
-    my $out = qx/$cmd $param1 $param2 $param3 $param4/; #cmd execution
+
+    my $out = `$cmd $param1 $param2 $param3 $param4 2>&1` ;
+
+    if ($? == -1) {
+        logger::printLn("failed to execute $fetcherName: $!");
+    }
 
     return $out;
 }
@@ -304,7 +318,7 @@ sub fetcher {
 sub fetchDbStatus {
     no warnings 'uninitialized';
     my ($sid, $oracleHome) = @_;
-    marshal::logPrintln("Fetching db status ".$sid . " " . $oracleHome);
+    logger::printLn("Fetching db status ".$sid . " " . $oracleHome);
     my $baseDir = config::getBaseDir();
 
     my $cmd = $baseDir."/fetch/$^O/dbstatus";
