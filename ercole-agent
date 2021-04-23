@@ -54,7 +54,7 @@ my $hostDataSchemaVersion = 1;
 
 
 sub main {
-    my %configuration = config::ReadConfig(); #ok
+    my %configuration = config::ReadConfig();
     $logger::logDirectory = $configuration{'LogDirectory'};
 
     while (1) {
@@ -64,22 +64,22 @@ sub main {
 }
 
 
-sub buildData { #OK
+sub buildData {
     my %configuration = @_;
-    my $out = fetcher("host", "", "X"); #ok
-    my %info = marshal::Host($out); #ok
-    my %clusterMembershipStatus = marshal::ClusterMembershipStatus($out); #ok
+    my $out = fetcher("host", "", "X");
+    my %info = marshal::Host($out);
+    my %clusterMembershipStatus = marshal::ClusterMembershipStatus($out);
     my %db;
 
-    $out = fetcher("filesystem", "", "X"); #ok
-    my @filesystems = marshal::Filesystems($out); #array of hashes' address, ok
+    $out = fetcher("filesystem", "", "X");
+    my @filesystems = marshal::Filesystems($out);
 
 
-    $out = fetcher("oratab", $configuration{'oratab'}, "X"); #ok
-    my @dbs = marshal::Oratab($out); #array of hashes' address, ok
+    $out = fetcher("oratab", $configuration{'oratab'}, "X");
+    my @dbs = marshal::Oratab($out);
 
-    $out = fetcher("running-databases"); #ok
-    my @runningDBs = marshal::RunningDatabases($out); #array of running dbs
+    $out = fetcher("running-databases");
+    my @runningDBs = marshal::RunningDatabases($out);
 
     my @runningUnlistedDatabases = ();
 
@@ -93,7 +93,7 @@ sub buildData { #OK
             }
         }
         if ($found == 0) {
-            push (@runningUnlistedDatabases, $runningDB); #OK
+            push (@runningUnlistedDatabases, $runningDB);
         }
     }
     $db{"unlistedRunningDatabases"} = \@runningUnlistedDatabases;
@@ -102,7 +102,7 @@ sub buildData { #OK
 
     foreach my $db (@dbs){
         my %dbEntry = %$db;
-        my $dbStatus = fetchDbStatus($dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #OPEN
+        my $dbStatus = fetchDbStatus($dbEntry{"dbName"}, $dbEntry{"oracleHome"});
 
         if ($dbStatus =~ m/OPEN/) {
             my %database;
@@ -110,7 +110,7 @@ sub buildData { #OK
             my ($dbVersion, $b, $c, $d) = split /\./, $outVersion;
 
             $out = fetcher("db", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $configuration{'AWR'});
-            %database = marshal::Database($out); #OK
+            %database = marshal::Database($out);
 
 
             if ($dbVersion > 11 || ($dbVersion == 11 && $b >= 2)) {
@@ -119,7 +119,7 @@ sub buildData { #OK
 
                 if ($out eq "TRUE") {
                     $out = fetcher("listpdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-                    my @pdbs = marshal::ListPDBs($out); #OK
+                    my @pdbs = marshal::ListPDBs($out);
 
                     for (my $i = 0; $i<scalar(@pdbs); $i++) {
 
@@ -131,10 +131,10 @@ sub buildData { #OK
                         }
 
                         $out = fetcher("tablespace_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
-                        $pdbs[$i]{"tablespaces"} = marshal::Tablespaces($out); #OK
+                        $pdbs[$i]{"tablespaces"} = marshal::Tablespaces($out);
 
                         $out = fetcher("schema_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
-                        $pdbs[$i]{"schemas"} = marshal::Schemas($out); #OK
+                        $pdbs[$i]{"schemas"} = marshal::Schemas($out);
                     }
 
                     $database{'pdbs'} = \@pdbs;
@@ -146,53 +146,53 @@ sub buildData { #OK
                 $database{'pdbs'} = [];
             }
 
-            if ($configuration{'forcestats'}) { #true, ok
-                fetcher("stats", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}); #Update db stats
+            if ($configuration{'forcestats'}) {
+                fetcher("stats", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             }
 
             $out = fetcher("tablespace", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-            $database{'tablespaces'} = marshal::Tablespaces($out); #OK
+            $database{'tablespaces'} = marshal::Tablespaces($out);
 
             $out = fetcher("schema", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-            $database{'schemas'} = marshal::Schemas($out); #OK
+            $database{'schemas'} = marshal::Schemas($out);
 
-            $out = fetcher("patch", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"}); #empty, OK
-            $database{'patches'} = marshal::Patches($out); #OK
+            $out = fetcher("patch", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"});
+            $database{'patches'} = marshal::Patches($out);
 
             $out = fetcher("opt", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"});
-            $database{'featureUsageStats'} = marshal::FeatureUsageStats($out); #OK
+            $database{'featureUsageStats'} = marshal::FeatureUsageStats($out);
 
             $out = fetcher("license",$dbEntry{"dbName"}, $dbVersion, $info{'hardwareAbstractionTechnology'}, $dbEntry{"oracleHome"});
-            $database{'licenses'} = marshal::Licenses($out); #OK
+            $database{'licenses'} = marshal::Licenses($out);
 
             $out = fetcher("addm", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             if ($out =~ m/Diagnostic Package License is needed for using this feature./) {
                 logger::printLn("Detected Diagnostic Package License is needed for using this feature error. Ignored!");
                 $database{'addms'} = ();
             } else {
-                $database{'addms'} = marshal::Addms($out); #OK
+                $database{'addms'} = marshal::Addms($out);
             }
 
             $out = fetcher("segmentadvisor", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-            $database{'segmentAdvisors'} = marshal::SegmentAdvisor($out); #OK
+            $database{'segmentAdvisors'} = marshal::SegmentAdvisor($out);
 
             $out = fetcher("psu", $dbEntry{"dbName"}, $dbVersion, $dbEntry{"oracleHome"});
-            $database{'psus'} = marshal::PSU($out); #OK
+            $database{'psus'} = marshal::PSU($out);
 
             $out = fetcher("backup", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             if ($out =~ m/unable to extend temp segment/) {
                 logger::printLn("Detected unable to extend temp segment error. Ignored!");
                 $database{'backups'}=();
             } else {
-                $database{'backups'} = marshal::Backups($out); #OK
+                $database{'backups'} = marshal::Backups($out);
             }
 
-            push (@databases, {%database}); #OK
+            push (@databases, {%database});
 
         } elsif ($dbStatus =~ m/MOUNTED/) {
             $out = fetcher("dbmounted", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-            my %database = marshal::Database($out); #should work, test with db not open
-            push (@databases, {%database}); #should work, test with db not open
+            my %database = marshal::Database($out);
+            push (@databases, {%database});
         }
     }
 
@@ -207,7 +207,6 @@ sub buildData { #OK
 
     $hostData{'hostname'} = $info{'hostname'};
 
-    #override host name with the one in config if != default
     if ($configuration{'hostname'} ne "default") {
         $hostData{'hostname'} = $configuration{'hostname'};
     }
@@ -225,7 +224,7 @@ sub buildData { #OK
 }
 
 
-sub sendData { #to test if success
+sub sendData {
     no warnings 'uninitialized';
     my ($d, $c) = @_;
 
@@ -322,7 +321,7 @@ sub fetchDbStatus {
     my $baseDir = config::getBaseDir();
 
     my $cmd = $baseDir."/fetch/$^O/dbstatus";
-    my $out = qx/$cmd $sid $oracleHome/ or die "UNREACHABLE"; #cmd execution
+    my $out = qx/$cmd $sid $oracleHome/ or die "UNREACHABLE";
 
     return $out;
 }
