@@ -16,14 +16,14 @@
 col RECOMMENDATIONS for a300
 col SEGMENT_OWNER for a60
 col TABLESPACE_NAME like SEGMENT_OWNER
-col RECL_GB for 9999999
+col RECL_GB for 9999999.99
 col HOSTNAME for a255
 col SEGMENT_NAME for a82
 col SEGMENT_TYPE like SEGMENT_OWNER
 col PARTITION_NAME like SEGMENT_OWNER
 
-set autoprint on
-set lines 900 pages 50000
+set autoprint on timing off
+set lines 900 pages 0
 SET FEEDBACK OFF
 set colsep "|||"
 VARIABLE x refcursor;
