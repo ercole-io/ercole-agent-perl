@@ -35,7 +35,7 @@ sub Patches {
         my (undef, undef, undef, undef, $version, $patchID, $action, $description, $date) = split /\|\|\|/, $line;
         $version=trim($version);
 
-        $p = trim($patchID);
+        my $p = trim($patchID);
         if ( $p eq "" ) {
             $patchID=0;
         } else {
