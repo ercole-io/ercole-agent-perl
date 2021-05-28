@@ -30,7 +30,7 @@ DESTROY	lib/HTTP/Net/LDAP/DSML.pm	660;"	s
 DESTROY	lib/HTTP/Net/LDAP/DSML.pm	675;"	s
 DESTROY	lib/HTTP/Net/LDAP/LDIF.pm	676;"	s
 DESTROY	lib/URI/URI/IRI.pm	46;"	s
-Database	marshal/database.pm	26;"	s
+Database	marshal/database.pm	27;"	s
 FeatureUsageStats	marshal/feature_usage_stats.pm	26;"	s
 Filesystems	marshal/filesystems.pm	30;"	s
 GET	lib/HTTP/HTTP/Request/Common.pm	20;"	s
@@ -997,7 +997,7 @@ P_SHRINK	lib/JSON/PP.pm	33;"	c
 P_SPACE_AFTER	lib/JSON/PP.pm	31;"	c
 P_SPACE_BEFORE	lib/JSON/PP.pm	30;"	c
 P_UTF8	lib/JSON/PP.pm	27;"	c
-Patches	marshal/patches.pm	26;"	s
+Patches	marshal/patches.pm	27;"	s
 ReadConfig	config/config.pm	28;"	s
 RunningDatabases	marshal/oratab.pm	46;"	s
 SKEW	lib/URI/URI/_punycode.pm	19;"	c
@@ -1786,8 +1786,8 @@ extension	lib/HTTP/Net/LDAP.pm	729;"	s
 extensions	lib/URI/URI/_ldap.pm	74;"	s
 extract_cookies	lib/HTTP/HTTP/Cookies.pm	182;"	s
 false	lib/JSON/PP.pm	1501;"	s
-fetchDbStatus	ercole-agent	318;"	s
-fetcher	ercole-agent	299;"	s
+fetchDbStatus	ercole-agent	317;"	s
+fetcher	ercole-agent	298;"	s
 file	lib/URI/URI/file.pm	93;"	s
 file	lib/URI/URI/file/Base.pm	74;"	s
 file	lib/URI/URI/file/Mac.pm	44;"	s
@@ -1962,10 +1962,10 @@ mac_path	lib/URI/URI/URL.pm	172;"	s
 main	ercole-agent	18;"	p
 main	ercole-agent	56;"	s
 main::buildData	ercole-agent	67;"	s
-main::fetchDbStatus	ercole-agent	318;"	s
-main::fetcher	ercole-agent	299;"	s
+main::fetchDbStatus	ercole-agent	317;"	s
+main::fetcher	ercole-agent	298;"	s
 main::main	ercole-agent	56;"	s
-main::sendData	ercole-agent	228;"	s
+main::sendData	ercole-agent	227;"	s
 marshal	marshal/addms.pm	18;"	p
 marshal	marshal/backup.pm	18;"	p
 marshal	marshal/cluster_membership_status.pm	18;"	p
@@ -1985,7 +1985,7 @@ marshal	marshal/tablespaces.pm	18;"	p
 marshal::Addms	marshal/addms.pm	28;"	s
 marshal::Backups	marshal/backup.pm	28;"	s
 marshal::ClusterMembershipStatus	marshal/cluster_membership_status.pm	28;"	s
-marshal::Database	marshal/database.pm	26;"	s
+marshal::Database	marshal/database.pm	27;"	s
 marshal::FeatureUsageStats	marshal/feature_usage_stats.pm	26;"	s
 marshal::Filesystems	marshal/filesystems.pm	30;"	s
 marshal::Host	marshal/host.pm	28;"	s
@@ -1993,7 +1993,7 @@ marshal::Licenses	marshal/licenses.pm	27;"	s
 marshal::ListPDBs	marshal/listpdb.pm	28;"	s
 marshal::Oratab	marshal/oratab.pm	27;"	s
 marshal::PSU	marshal/psu.pm	28;"	s
-marshal::Patches	marshal/patches.pm	26;"	s
+marshal::Patches	marshal/patches.pm	27;"	s
 marshal::RunningDatabases	marshal/oratab.pm	46;"	s
 marshal::Schemas	marshal/schemas.pm	27;"	s
 marshal::SegmentAdvisor	marshal/segmentadvisors.pm	28;"	s
@@ -2254,7 +2254,7 @@ secure	lib/URI/URI/sips.pm	13;"	s
 secure	lib/URI/URI/snews.pm	13;"	s
 secure	lib/URI/URI/ssh.pm	15;"	s
 selector	lib/URI/URI/gopher.pm	67;"	s
-sendData	ercole-agent	228;"	s
+sendData	ercole-agent	227;"	s
 send_basic_header	lib/HTTP/HTTP/Daemon.pm	415;"	s
 send_crlf	lib/HTTP/HTTP/Daemon.pm	408;"	s
 send_dir	lib/HTTP/HTTP/Daemon.pm	573;"	s

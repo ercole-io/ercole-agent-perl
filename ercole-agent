@@ -146,7 +146,7 @@ sub buildData {
                 $database{'pdbs'} = [];
             }
 
-            if ($configuration{'forcestats'}) {
+            if ($configuration{'forcestats'} eq "true") {
                 fetcher("stats", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             }
 
