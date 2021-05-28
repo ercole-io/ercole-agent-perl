@@ -49,7 +49,7 @@ use MIME::Base64;
 use lib "./logger";
 use logger;
 
-my $version = "latest";
+my $version = "ERCOLE_VERSION";
 my $hostDataSchemaVersion = 1;
 
 
