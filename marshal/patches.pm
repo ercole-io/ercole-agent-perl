@@ -23,6 +23,7 @@ use diagnostics;
 use lib "./marshal";
 use common;
 
+
 sub Patches {
     no warnings 'uninitialized';
     my $cmdOutput = shift;
@@ -33,7 +34,14 @@ sub Patches {
         my $line = $c;
         my (undef, undef, undef, undef, $version, $patchID, $action, $description, $date) = split /\|\|\|/, $line;
         $version=trim($version);
-        $patchID=parseInt(trim($patchID));
+
+        $p = trim($patchID);
+        if ( $p eq "" ) {
+            $patchID=0;
+        } else {
+            $patchID=parseInt($p);
+        }
+
         $action=trim($action);
         $description=trim($description);
         $date=trim($date);
@@ -42,7 +50,7 @@ sub Patches {
         $patch{'action'} = $action;
         $patch{'description'} = $description;
         $patch{'date'} = $date;
-        
+
         push(@patches, {%patch});
     }
 
