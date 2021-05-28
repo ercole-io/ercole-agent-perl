@@ -23,6 +23,7 @@ use diagnostics;
 
 use lib "./lib/JSON";
 use lib "./lib/HTTP";
+use lib "./lib/URI";
 
 use PP;
 use lib "./config";

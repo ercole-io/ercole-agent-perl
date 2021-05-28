@@ -1583,7 +1583,7 @@ blessed_to_json	lib/JSON/PP.pm	552;"	s
 blocking	lib/HTTP/Net/HTTPS.pm	57;"	s
 boolean_values	lib/JSON/PP.pm	199;"	s
 boundary	lib/HTTP/HTTP/Request/Common.pm	284;"	s
-buildData	ercole-agent	67;"	s
+buildData	ercole-agent	68;"	s
 callback	lib/HTTP/Net/LDAP/Message.pm	222;"	s
 can	lib/URI/URI/WithBase.pm	56;"	s
 can_read	lib/HTTP/LWP/Protocol/http.pm	432;"	s
@@ -1786,8 +1786,8 @@ extension	lib/HTTP/Net/LDAP.pm	729;"	s
 extensions	lib/URI/URI/_ldap.pm	74;"	s
 extract_cookies	lib/HTTP/HTTP/Cookies.pm	182;"	s
 false	lib/JSON/PP.pm	1501;"	s
-fetchDbStatus	ercole-agent	317;"	s
-fetcher	ercole-agent	298;"	s
+fetchDbStatus	ercole-agent	318;"	s
+fetcher	ercole-agent	299;"	s
 file	lib/URI/URI/file.pm	93;"	s
 file	lib/URI/URI/file/Base.pm	74;"	s
 file	lib/URI/URI/file/Mac.pm	44;"	s
@@ -1960,12 +1960,12 @@ logger::getTime	logger/logger.pm	45;"	s
 logger::printLn	logger/logger.pm	27;"	s
 mac_path	lib/URI/URI/URL.pm	172;"	s
 main	ercole-agent	18;"	p
-main	ercole-agent	56;"	s
-main::buildData	ercole-agent	67;"	s
-main::fetchDbStatus	ercole-agent	317;"	s
-main::fetcher	ercole-agent	298;"	s
-main::main	ercole-agent	56;"	s
-main::sendData	ercole-agent	227;"	s
+main	ercole-agent	57;"	s
+main::buildData	ercole-agent	68;"	s
+main::fetchDbStatus	ercole-agent	318;"	s
+main::fetcher	ercole-agent	299;"	s
+main::main	ercole-agent	57;"	s
+main::sendData	ercole-agent	228;"	s
 marshal	marshal/addms.pm	18;"	p
 marshal	marshal/backup.pm	18;"	p
 marshal	marshal/cluster_membership_status.pm	18;"	p
@@ -2254,7 +2254,7 @@ secure	lib/URI/URI/sips.pm	13;"	s
 secure	lib/URI/URI/snews.pm	13;"	s
 secure	lib/URI/URI/ssh.pm	15;"	s
 selector	lib/URI/URI/gopher.pm	67;"	s
-sendData	ercole-agent	227;"	s
+sendData	ercole-agent	228;"	s
 send_basic_header	lib/HTTP/HTTP/Daemon.pm	415;"	s
 send_crlf	lib/HTTP/HTTP/Daemon.pm	408;"	s
 send_dir	lib/HTTP/HTTP/Daemon.pm	573;"	s
