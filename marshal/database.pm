@@ -33,10 +33,7 @@ sub Database {
         my %patch;
         my $line = $c;
 
-        my ($name, $dbID, $role, $uniqueName, $instanceNumber, $instanceName, $status, $version, $platform, $archiveLog,
-            $charset, $ncharset, $blockSize,$cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize,
-            $segmentsSize, $datafileSize, $allocable, $elapsed, $dbtime, $dailycpuusage, $work, $asm,
-            $dataguard) = split /\|\|\|/, $line;
+        my ($name, $dbID, $role, $uniqueName, $instanceNumber, $instanceName, $status, $version, $platform, $archiveLog,$charset, $ncharset, $blockSize,$cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize,$segmentsSize, $datafileSize, $allocable, $elapsed, $dbtime, $dailycpuusage, $work, $asm,$dataguard) = split /\|\|\|/, $line;
         $name=trim($name);
         $dbID=trim($dbID);
         $role=trim($role);

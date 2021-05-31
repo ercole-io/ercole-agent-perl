@@ -24,11 +24,11 @@ use lib "./marshal";
 use common;
 
 # Licenses returns a list of licenses from the output of the licenses fetcher command.
-sub Oratab { 
+sub Oratab {
     no warnings 'uninitialized';
     my $cmdOutput = shift;
 
-	my @oratab;
+    my @oratab;
     for my $line (split /\n/, $cmdOutput) {
         my ($dbname, $oraclehome) = split /:/, $line;
         my %oratabEntry;
@@ -43,14 +43,15 @@ sub Oratab {
     return @oratab;
 }
 
-sub RunningDatabases { 
+
+sub RunningDatabases {
     no warnings 'uninitialized';
     my $cmdOutput = shift;
 
-	my @list = ();
+    my @list = ();
     for my $line (split /\n/, $cmdOutput) {
         my $line = trim($line);
-    
+
         next if $line eq "";
 
         push(@list, $line);
