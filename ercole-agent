@@ -23,6 +23,7 @@ use diagnostics;
 
 use lib "./lib/JSON";
 use lib "./lib/HTTP";
+use lib "./lib/URI";
 
 use PP;
 use lib "./config";
@@ -49,7 +50,7 @@ use MIME::Base64;
 use lib "./logger";
 use logger;
 
-my $version = "latest";
+my $version = "ERCOLE_VERSION";
 my $hostDataSchemaVersion = 1;
 
 
@@ -146,7 +147,7 @@ sub buildData {
                 $database{'pdbs'} = [];
             }
 
-            if ($configuration{'forcestats'}) {
+            if ($configuration{'forcestats'} eq "true") {
                 fetcher("stats", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             }
 

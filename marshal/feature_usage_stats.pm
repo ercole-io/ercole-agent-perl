@@ -23,6 +23,7 @@ use diagnostics;
 use lib "./marshal";
 use common;
 
+
 sub FeatureUsageStats {
     no warnings 'uninitialized';
     my $cmdOutput = shift;
@@ -37,9 +38,9 @@ sub FeatureUsageStats {
         $detectedUsages=parseInt(trim($detectedUsages));
         $currentlyUsed=parseBool(trim($currentlyUsed));
         $firstUsageDate = trim($firstUsageDate);
-        $firstUsageDate =~ s/(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/$1-$2-$3T$4:$5:$6Z/g; 
+        $firstUsageDate =~ s/(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/$1-$2-$3T$4:$5:$6Z/g;
         $lastUsageDate = trim($lastUsageDate);
-        $lastUsageDate =~ s/(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/$1-$2-$3T$4:$5:$6Z/g; 
+        $lastUsageDate =~ s/(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/$1-$2-$3T$4:$5:$6Z/g;
         $extraFeatureInfo=trim($extraFeatureInfo);
 
         $feature{'product'} = $product;
@@ -48,7 +49,7 @@ sub FeatureUsageStats {
         $feature{'currentlyUsed'} = parseBool($currentlyUsed);
         $feature{'firstUsageDate'} = $firstUsageDate;
         $feature{'lastUsageDate'} = $lastUsageDate;
-        $feature{'extraFeatureInfo'} = $extraFeatureInfo;      
+        $feature{'extraFeatureInfo'} = $extraFeatureInfo;
 
         push(@features, {%feature});
     }

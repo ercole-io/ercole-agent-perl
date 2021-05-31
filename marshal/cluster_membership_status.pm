@@ -43,7 +43,7 @@ sub ClusterMembershipStatus {
             $cms{"sunCluster"} = parseBool(trim($value));
         } elsif ($key eq "Aixcluster"){
             $cms{"hacmp"} = parseBool(trim($value));
-        } 
+        }
         $value=trim($value);
     }
 

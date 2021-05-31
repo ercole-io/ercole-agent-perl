@@ -23,6 +23,7 @@ use diagnostics;
 use lib "./marshal";
 use common;
 
+
 sub Database {
     no warnings 'uninitialized';
     my $cmdOutput = shift;
@@ -31,12 +32,11 @@ sub Database {
     for my $c (split /\n/, $cmdOutput) {
         my %patch;
         my $line = $c;
-    
-        my ($name, $uniqueName, $instanceNumber, $instanceName, $status, $version, 
-            $platform, $archiveLog, $charset, $ncharset, $blockSize, 
-            $cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize, 
-            $segmentsSize, $datafileSize, $allocable, $elapsed, $dbtime, $dailycpuusage, $work, $asm, $dataguard) = split /\|\|\|/, $line;
+
+        my ($name, $dbID, $role, $uniqueName, $instanceNumber, $instanceName, $status, $version, $platform, $archiveLog,$charset, $ncharset, $blockSize,$cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize,$segmentsSize, $datafileSize, $allocable, $elapsed, $dbtime, $dailycpuusage, $work, $asm,$dataguard) = split /\|\|\|/, $line;
         $name=trim($name);
+        $dbID=trim($dbID);
+        $role=trim($role);
         $uniqueName=trim($uniqueName);
         $instanceNumber=parseInt(trim($instanceNumber));
         $instanceName=trim($instanceName);
@@ -67,10 +67,12 @@ sub Database {
         } elsif ($archiveLog eq "NOARCHIVELOG"){
             $archiveLog=parseBool("N");
         } else {
-             die "archivelog value should be ARCHIVELOG or NOARCHIVELOG";
+            die "archivelog value should be ARCHIVELOG or NOARCHIVELOG";
         }
 
         $db{'name'} = $name;
+        $db{'dbID'} = $dbID;
+        $db{'role'} = $role;
         $db{'uniqueName'} = $uniqueName;
         $db{'instanceNumber'} = $instanceNumber;
         $db{'instanceName'} = $instanceName;
@@ -95,9 +97,10 @@ sub Database {
         $db{'work'} = $work;
         $db{'asm'} = parseBool($asm);
         $db{'dataguard'} = parseBool($dataguard);
-	    if ($dailycpuusage eq '') {
-		    $db{'dailyCPUUsage'} = $work;
-    	}
+
+        if ($dailycpuusage eq '') {
+            $db{'dailyCPUUsage'} = $work;
+        }
 
         #empty fields
         $db{'patches'}=[];

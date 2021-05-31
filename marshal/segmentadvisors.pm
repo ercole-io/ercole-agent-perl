@@ -50,9 +50,9 @@ sub SegmentAdvisor {
             $segmentAdvisor{'partitionName'} = $partitionName;
             $segmentAdvisor{'reclaimable'} = $reclaimable;
             $segmentAdvisor{'recommendation'} = $recommendation;
-            push(@segmentAdvisors, {%segmentAdvisor});            
+            push(@segmentAdvisors, {%segmentAdvisor});
         }
-        $count++;  
+        $count++;
     }
 
     return \@segmentAdvisors;

@@ -34,7 +34,7 @@ sub ListPDBs {
         my %pdb;
         my $line = $c;
         my ($name, $status) = split /\|\|\|/, $line;
-        
+
         $name=trim($name);
         $status=trim($status);
 

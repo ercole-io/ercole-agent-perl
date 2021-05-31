@@ -45,18 +45,18 @@ sub Filesystems {
         $lines.= marshalKey("mountedOn").marshalString(trim($mountedon)).", ";
         $lines.= "}\n";
     }
-    
+
     $lines =~ s/, }/}/g;
     $lines =~ s/},]/}]/g;
 
     my @filesystem = split ("\n", $lines);
-    
+
     my @m;
 
     for my $i (@filesystem){
         my $lines = $i;
         my $fs = JSON::PP::decode_json($lines);
-    
+
         push(@m, $fs);
     }
 

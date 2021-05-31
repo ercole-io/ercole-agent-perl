@@ -23,43 +23,50 @@ use diagnostics;
 use lib "./lib/JSON";
 use PP;
 
+
 sub marshalValue {
     no warnings 'uninitialized';
     my $s = shift;
-	
+
     if ($s eq "Y" || $s eq "N"){
         return parseBool();
     }
 
     if ($s eq ""){
         return "\""."\"";
-	}
-    
+    }
+
     if ($s =~ /\D/) {
+
         # is not a number
-        return "\"".$s."\"";    
+        return "\"".$s."\"";
     } else {
+
         # is a number
         return $s;
     }
 }
 
+
 sub marshalString {
     my $s = shift;
-	return "\"" . $s . "\"";
+    return "\"" . $s . "\"";
 }
+
 
 sub marshalKey {
     my $s = shift;
-	return "\"" . $s . "\" : ";
+    return "\"" . $s . "\" : ";
 }
 
-sub  trim {
+
+sub trim {
     no warnings 'uninitialized';
     my $s = shift;
     $s =~ s/^\s+|\s+$//g;
     return $s;
 }
+
 
 sub parseBool {
     no warnings 'uninitialized';
@@ -83,8 +90,8 @@ sub parseBool {
     # if ($value eq "Y"){
     #     $feature{'Status'} = $t;
     # }
-   
-    
+
+
     # if ($s eq "Y"){
     #     return "true";
     # } else {
@@ -97,9 +104,10 @@ sub parseInt {
     my $s = shift;
 
     die "Cannot convert ".$s."to int" unless $s =~ m/[-+]?[0-9]+/;
-    
+
     return $s + 0;
 }
+
 
 sub parseNumber {
     my $s = shift;
@@ -109,13 +117,14 @@ sub parseNumber {
     return $s + 0.0;
 }
 
+
 sub parseNullableNumber {
     my $s = shift;
 
     my $null;
     if ($s eq "") {
-		return $null;
-	} elsif ($s eq "N/A") {
+        return $null;
+    } elsif ($s eq "N/A") {
         return $null;
     } else {
         return parseNumber($s);
@@ -128,26 +137,30 @@ sub parseCount { #to improve
     my $s = shift; #string
 
     if ($s eq "") {
-		return 0;
-	}
-    
-	return parseInt($s);
+        return 0;
+    }
+
+    return parseInt($s);
 }
+
 
 sub logPrintln {
     my @s = @_;
 
     getTime();
-    
+
     print @s;
     print "\n";
 }
 
-sub getTime {
-    my $ymd = sub{sprintf '%04d/%02d/%02d',
-    $_[5]+1900, $_[4]+1, $_[3]}->(localtime);
 
-    print STDERR $ymd." "; 
+sub getTime {
+    my $ymd = sub{
+        sprintf '%04d/%02d/%02d',$_[5]+1900, $_[4]+1, $_[3];
+      }
+      ->(localtime);
+
+    print STDERR $ymd." ";
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
 
     printf STDERR ("%02d:%02d:%02d", $hour, $min, $sec);

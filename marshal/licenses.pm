@@ -24,17 +24,17 @@ use lib "./marshal";
 use common;
 
 # Licenses returns a list of licenses from the output of the licenses fetcher command.
-sub Licenses { 
+sub Licenses {
     no warnings 'uninitialized';
     my $cmdOutput = shift;
     my @licenses;
-    
+
     for my $c (split /\n/, $cmdOutput) {
         my %license;
         my $line = $c;
 
-        my $count = () = $line =~ /;/g; #count the number of ";". If they are 2, there are 3 string maybe empty      
-        
+        my $count = () = $line =~ /;/g; #count the number of ";". If they are 2, there are 3 string maybe empty
+
         if (($count+1) == 3){
             my ($key, $value) = split /;/, $line;
             $key=trim($key);
@@ -45,9 +45,9 @@ sub Licenses {
             $license{'name'} = $key;
             $license{'count'} = parseCount($value);
             push(@licenses, {%license});
-        } 
+        }
     }
-    
+
     return \@licenses;
 
 }

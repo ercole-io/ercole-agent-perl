@@ -75,7 +75,7 @@ sub Host {
             $key = "hardwareAbstraction";
         } elsif ($key eq "Type"){
             $key = "hardwareAbstractionTechnology";
-        } 
+        }
         $value=trim($value);
 
         if ($key eq "cpuCores" || $key eq "cpuThreads" || $key eq "cpuSockets" || $key eq "memoryTotal" || $key eq "swapTotal" || $key eq "threadsPerCore" || $key eq "coresPerSocket" ){

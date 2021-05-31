@@ -28,16 +28,16 @@ use common;
 sub ReadConfig{
     my $baseDir = getBaseDir();
     my $configFile = $baseDir . "/config.json";
-        
+
     if (not(-e $configFile)){
         $configFile = "/opt/ercole-agent/config.json";
     }
 
     my $err = open(my $FHR, '<', $configFile)
-    or die "Cannot open the file or $!";
+      or die "Cannot open the file or $!";
 
     my @lines = <$FHR>; #file into array
-    
+
     #without this while, $! = Inappropriate ioctl for device
     while (<$FHR>){} #read file
 
@@ -47,13 +47,13 @@ sub ReadConfig{
         print "\n";
     } else {
         $raw = join('', @lines); #array into string
-    };
+    }
     close($FHR);
-   
+
     $raw =~ s/{//g;
     $raw =~ s/}//g;
     $raw =~ s/":/"=>/g;
-      
+
     my %config;
 
     my @list = split (/,/, $raw);
@@ -66,13 +66,14 @@ sub ReadConfig{
         $value = marshal::trim($value);
         $config{$key} = $value;
     }
-    
+
     if (not($config{"oratab"})){
         $config{"oratab"} = "/etc/oratab";
     }
 
     return %config;
 }
+
 
 sub getBaseDir {
     return $ENV{PWD};
