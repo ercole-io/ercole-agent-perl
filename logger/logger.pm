@@ -21,7 +21,16 @@ use strict;
 use warnings;
 use diagnostics;
 
-my $logDirectory = "";
+
+sub setLogDirectory{
+    my $logDirectory = shift;
+    if ( $logDirectory eq '' ) {
+        return;
+    }
+
+    $logger::logDirectory = $logDirectory;
+    print "ercole-agent will log on: $logger::logDirectory\n";
+}
 
 
 sub printLn {
@@ -30,13 +39,13 @@ sub printLn {
 
     if ( $logger::logDirectory eq '' ) {
         print "$time @message\n";
-
-    } else {
-        open my $log, ">>", "$logger::logDirectory/ercole-agent.log"
-          or die "$logger::logDirectory/ercole-agent.log couldn't be opened: $!";
-
-        print $log "$time @message\n";
+        return;
     }
+
+    open my $log, ">>", "$logger::logDirectory/ercole-agent.log"
+      or die "$logger::logDirectory/ercole-agent.log couldn't be opened: $!";
+
+    print $log "$time @message\n";
 
     return;
 }
