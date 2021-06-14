@@ -237,7 +237,7 @@ sub sendData {
 
 
     my $b = JSON::PP::encode_json(\%data);
-    logger::printLn("Data:\n" . $b);
+    logger::printLn("Data:\n" . $b . "\n");
 
     my $url = "$configuration{'serverurl'}/hosts";
 
