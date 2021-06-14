@@ -71,7 +71,7 @@ sub Database {
         }
 
         $db{'name'} = $name;
-        $db{'dbID'} = $dbID;
+        $db{'dbID'} = $dbID + 0;
         $db{'role'} = $role;
         $db{'uniqueName'} = $uniqueName;
         $db{'instanceNumber'} = $instanceNumber;
