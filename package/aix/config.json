@@ -10,5 +10,6 @@
     "EnableServerValidation": false,
     "oratab": "/etc/oratab",
     "AWR": 30,
-    "UseCurl": false
+    "UseCurl": false,
+    "LogDirectory": ""
 }
