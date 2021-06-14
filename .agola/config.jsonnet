@@ -56,7 +56,7 @@ local task_pkg_build(setup) = {
     },
     { type: 'save_to_workspace', contents: [{ source_dir: './dist/', dest_dir: '/dist/', paths: ['**'] }] },
   ],
-  depends: ['check perl syntax'],
+  // depends: ['check perl syntax'],
 };
 
 local task_deploy_repository(dist) = {
@@ -105,18 +105,18 @@ local task_deploy_repository(dist) = {
     {
       name: 'ercole-agent-perl',
       tasks: [
-        {
-          name:'check perl syntax',
-          runtime: {
-            type: 'pod',
-            architecture: 'amd64',
-            containers: [ { image: 'sorintdev/rpmbuild-mugs:0.1' } ],  
-          },         
-          steps: [
-            { type: 'clone' },
-            { type: 'run', command: 'perl -c ercole-agent'},
-          ],
-        }, 
+        // {
+        //   name:'check perl syntax',
+        //   runtime: {
+        //     type: 'pod',
+        //     architecture: 'amd64',
+        //     containers: [ { image: 'sorintdev/rpmbuild-mugs:0.1' } ],  
+        //   },         
+        //   steps: [
+        //     { type: 'clone' },
+        //     { type: 'run', command: 'perl -c ercole-agent'},
+        //   ],
+        // }, 
       ] + [
         task_pkg_build(setup)
         for setup in [
