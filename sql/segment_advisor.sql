@@ -71,7 +71,7 @@ IF(v_count > 0 ) THEN
                  SEGMENT_NAME,
                  SEGMENT_TYPE,
                  PARTITION_NAME,
-                 decode(round(RECLAIMABLE_SPACE/1024/1024/1024,0),'0','<1',round(RECLAIMABLE_SPACE/1024/1024/1024,0)) as RECL_GB, 
+                 RECLAIMABLE_SPACE/1024/1024/1024 as RECL_GB,
                  RECOMMENDATIONS
                  FROM TABLE(dbms_space.asa_recommendations())
                  where segment_owner not in ('ANONYMOUS','APEX_030200','APEX_040000','APEX_SSO','APPQOSSYS','CTXSYS','DBSNMP','DIP','EXFSYS','FLOWS_FILES','MDSYS','OLAPSYS','ORACLE_OCM','ORDDATA','ORDPLUGINS','ORDSYS','OUTLN','OWBSYS') 

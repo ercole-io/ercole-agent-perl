@@ -18,6 +18,8 @@ set colsep "|||"
 
 select 
 (select value from v$parameter where name='db_name') as Nome_DB,
+(SELECT dbid FROM v$database) AS DBID,
+(SELECT DATABASE_ROLE FROM v$database) AS DBROLE,
 (select db_unique_name from v$database) as DB_Unique_name,
 (select instance_number from v$instance) as Instance_number,
 (select instance_name from v$instance) AS Instance_name,
@@ -31,7 +33,7 @@ select
 (select value from v$parameter where name='cpu_count') as Cpu_count,
 (select rtrim(to_char(value/1024/1024/1024, 'FM9G999G999D999', 'NLS_NUMERIC_CHARACTERS=''.,'''),',') from v$parameter where name='sga_target')  as Sga_Target,
 (select rtrim(to_char(value/1024/1024/1024, 'FM9G999G999D999', 'NLS_NUMERIC_CHARACTERS=''.,'''),',') from v$parameter where name='pga_aggregate_target') as Pga_Target,
-(select rtrim(to_char(value/1024/1024/1024, 'FM9G999G999D999', 'NLS_NUMERIC_CHARACTERS=''.,'''),',') from v$parameter where name='memory_target') as Pga_Target,
+(select NVL(MIN(rtrim(to_char(value/1024/1024/1024, 'FM9G999G999D999', 'NLS_NUMERIC_CHARACTERS=''.,'''),',')),0) FROM v$parameter WHERE name='memory_target') AS Memory_Target,
 (select rtrim(to_char(value/1024/1024/1024, 'FM9G999G999D999', 'NLS_NUMERIC_CHARACTERS=''.,'''),',') from v$parameter where name='sga_max_size') as sga_max_size,
 '0','0','0','0','0','0','0',
 (select case when (select count(*) from v$datafile where name like '+%') > 0 then 'Y' else 'N' end as "ASM" from dual ),
