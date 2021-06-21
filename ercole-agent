@@ -234,9 +234,16 @@ sub sendData {
 
     logger::printLn("Sending data...");
 
-
     my $b = JSON::PP::encode_json(\%data);
-    logger::printLn("Data:\n" . $b . "\n");
+
+    logger::printLn("Data:\n");
+    if ($configuration{'PrettyPrintHostdata'} eq 'true') {
+        my $json = JSON::PP->new->pretty(["enable"]);
+        print $json->encode(\%data), "\n";
+    } else {
+        logger::printLn($b . "\n");
+    }
+
 
     my $url = "$configuration{'serverurl'}/hosts";
 
