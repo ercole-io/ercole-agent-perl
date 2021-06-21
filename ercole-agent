@@ -183,7 +183,7 @@ sub buildData {
             $out = fetcher("backup", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             if ($out =~ m/unable to extend temp segment/) {
                 logger::printLn("Detected unable to extend temp segment error. Ignored!");
-                $database{'backups'}=();
+                $database{'backups'}=[];
             } else {
                 $database{'backups'} = marshal::Backups($out);
             }
