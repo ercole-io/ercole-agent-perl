@@ -29,11 +29,16 @@ sub Database {
     my $cmdOutput = shift;
     my %db;
 
-    for my $c (split /\n/, $cmdOutput) {
+    for my $line (split /\n/, $cmdOutput) {
         my %patch;
-        my $line = $c;
 
-        my ($name, $dbID, $role, $uniqueName, $instanceNumber, $instanceName, $status, $version, $platform, $archiveLog,$charset, $ncharset, $blockSize,$cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize,$segmentsSize, $datafileSize, $allocable, $elapsed, $dbtime, $dailycpuusage, $work, $asm,$dataguard) = split /\|\|\|/, $line;
+        my @values = split (/\|\|\|/, $line);
+        if ( scalar @values ne 27 ) {
+            next;
+        }
+
+        my ($name, $dbID, $role, $uniqueName, $instanceNumber, $instanceName, $status, $version, $platform, $archiveLog,$charset, $ncharset, $blockSize,$cpuCount, $sgaTarget, $pgaTarget, $memoryTarget, $sgaMaxSize,$segmentsSize, $datafileSize, $allocable, $elapsed, $dbtime, $dailycpuusage, $work, $asm,$dataguard) = @values;
+
         $name=trim($name);
         $dbID=trim($dbID);
         $role=trim($role);
@@ -113,6 +118,7 @@ sub Database {
         $db{'backups'}=[];
         $db{'featureUsageStats'}=[];
         $db{'services'}=[];
+        $db{'isCDB'}= \0; #special value that become JSON false, as JSON::PP::false
     }
 
     return %db;

@@ -30,14 +30,28 @@ sub Addms {
     my $cmdOutput = shift;
     my @addms;
 
-    for my $c (split /\n/, $cmdOutput) {
+    for my $line (split /\n/, $cmdOutput) {
         my %addm;
-        my $line = $c;
-        my (undef, undef, $finding, $recommendation, $action, $benefit) = split /\|\|\|/, $line;
+
+        my @values = split (/\|\|\|/, $line);
+        if ( scalar @values ne 6 ) {
+            next;
+        }
+
+        my (undef, undef, $finding, $recommendation, $action, $benefit) = @values;
+
+
         $finding=trim($finding);
         $recommendation=trim($recommendation);
         $action=trim($action);
-        $benefit=parseNumber(trim($benefit));
+
+        $benefit = trim($benefit);
+        if ( $benefit eq "" ) {
+            $benefit=0;
+        } else {
+            $benefit=parseNumber($benefit);
+        }
+
         $addm{'finding'} = $finding;
         $addm{'recommendation'} = $recommendation;
         $addm{'action'} = $action;

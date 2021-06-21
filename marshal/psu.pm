@@ -30,10 +30,16 @@ sub PSU {
     my $cmdOutput = shift;
     my @psus;
 
-    for my $c (split /\n/, $cmdOutput) {
+    for my $line (split /\n/, $cmdOutput) {
         my %psu;
-        my $line = $c;
-        my ($description, $date) = split /\|\|\|/, $line;
+
+        my @values = split (/\|\|\|/, $line);
+        if ( scalar @values ne 2 ) {
+            next;
+        }
+
+        my ($description, $date) = @values;
+
         $description=trim($description);
         $date=trim($date);
         $psu{'description'} = $description;

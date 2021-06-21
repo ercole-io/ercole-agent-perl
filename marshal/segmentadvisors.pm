@@ -32,12 +32,18 @@ sub SegmentAdvisor {
     my $count = 0;
 
 
-    for my $c (split /\n/, $cmdOutput) {
-        my %segmentAdvisor;
-        my $line = $c;
-        my (undef, undef, $segmentOwner, $segmentName, $segmentType, $partitionName, $reclaimable, $recommendation) = split /\|\|\|/, $line;
+    for my $line (split /\n/, $cmdOutput) {
 
         if ($count > 2) {
+            my %segmentAdvisor;
+
+            my @values = split (/\|\|\|/, $line);
+            if ( scalar @values ne 8 ) {
+                next;
+            }
+
+            my (undef, undef, $segmentOwner, $segmentName, $segmentType, $partitionName, $reclaimable, $recommendation) = @values;
+
             $segmentOwner=trim($segmentOwner);
             $segmentName=trim($segmentName);
             $segmentType=trim($segmentType);
