@@ -39,7 +39,7 @@ SOCKET=$(/usr/sbin/psrinfo -p)
 if [ "$SOCKET" -gt "$CPU_CORES" ]; then
   CORES_PER_SOCKET=1 
 else 
-  CORES_PER_SOCKET= $(($CPU_CORES / $SOCKET))
+  CORES_PER_SOCKET=$(($CPU_CORES / $SOCKET))
 fi
 
 CHECK_SUN_CLUSTER=$(ps -ef | grep -v grep | grep rpc.pmfd|wc -l)
