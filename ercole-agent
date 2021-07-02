@@ -23,7 +23,8 @@ use diagnostics;
 
 use lib "./lib/JSON";
 use lib "./lib/HTTP";
-use lib "./lib/URI";
+
+# use lib "./lib/URI"; # needed by Solaris
 
 use PP;
 use lib "./config";
@@ -251,6 +252,8 @@ sub sendData {
     if ($configuration{'UseCurl'} eq 'true') {
         logger::printLn("Sending data with curl");
 
+        $b =~ s/'/_/g ;
+
         my $command = "curl \\
             -H 'Content-Type: application/json' \\
             -u '$configuration{'serverusr'}':'$configuration{'serverpsw'}' \\
@@ -263,6 +266,7 @@ sub sendData {
         }
 
         my $out = `$command  2>&1`;
+
         logger::printLn("Response output: " . $out);
 
     } else {
