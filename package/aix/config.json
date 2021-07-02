@@ -11,5 +11,6 @@
     "oratab": "/etc/oratab",
     "AWR": 30,
     "UseCurl": false,
-    "LogDirectory": ""
+    "LogDirectory": "",
+    "PrettyPrintHostdata": false
 }

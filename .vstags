@@ -1349,8 +1349,8 @@ expires	lib/HTTP/HTTP/Headers.pm	286;"	s
 extension	lib/HTTP/Net/LDAP.pm	729;"	s
 extract_cookies	lib/HTTP/HTTP/Cookies.pm	182;"	s
 false	lib/JSON/PP.pm	1501;"	s
-fetchDbStatus	ercole-agent	325;"	s
-fetcher	ercole-agent	306;"	s
+fetchDbStatus	ercole-agent	324;"	s
+fetcher	ercole-agent	305;"	s
 file_exts	lib/HTTP/LWP/MediaTypes.pm	134;"	s
 filename	lib/HTTP/HTTP/Response.pm	99;"	s
 filter_json_object	lib/JSON/PP.pm	221;"	s
@@ -1494,8 +1494,8 @@ logger::setLogDirectory	logger/logger.pm	25;"	s
 main	ercole-agent	18;"	p
 main	ercole-agent	56;"	s
 main::buildData	ercole-agent	68;"	s
-main::fetchDbStatus	ercole-agent	325;"	s
-main::fetcher	ercole-agent	306;"	s
+main::fetchDbStatus	ercole-agent	324;"	s
+main::fetcher	ercole-agent	305;"	s
 main::main	ercole-agent	56;"	s
 main::sendData	ercole-agent	228;"	s
 marshal	marshal/addms.pm	18;"	p

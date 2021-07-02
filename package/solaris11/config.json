@@ -11,5 +11,6 @@
     "oratab": "/var/opt/oracle/oratab",
     "AWR": 30,
     "UseCurl": true,
-    "LogDirectory": ""
+    "LogDirectory": "",
+    "PrettyPrintHostdata": false
 }

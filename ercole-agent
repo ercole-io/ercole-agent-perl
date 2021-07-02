@@ -262,8 +262,7 @@ sub sendData {
         }
 
         my $out = `$command  2>&1`;
-        logger::printLn($out);
-        logger::printLn("Hostdata sent!");
+        logger::printLn("Response output: " . $out);
 
     } else {
 
