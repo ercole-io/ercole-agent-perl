@@ -25,13 +25,14 @@ CPU_MODEL=$(kstat cpu_info | grep "brand" | cut -c34- | head -n 1)
 CPU_SPEED=$(/usr/sbin/psrinfo -pv |  grep clock | sed 's/.* clock \([0-9]*\).*/\1/' | head -n 1)
 SWP_TOTAL=$(top -d1 | grep -i "total swap" | cut -d',' -f3 | cut -d' ' -f2 | sed 's/[^0-9]*//g')
 MEM_TOTAL=$(($(/usr/sbin/prtconf | grep "Memory" | sed -e 's/Memory size: \(.*\) Megabytes/\1/') / 1024))
-CPU_THREAD=$(nproc --all)
+CPU_THREAD=$( psrinfo | wc -l )
+
 if [ "$CPU_THREAD" = '1' ]; then
   CPU_CORES=1
   THREADS_PER_CORE=1  
 else 
-  CPU_CORES=$(($CPU_THREAD / 2))
-  THREADS_PER_CORE=2
+  CPU_CORES=$( kstat cpu_info|grep core_id|sort -u|wc -l )
+  THREADS_PER_CORE=$(( CPU_THREAD / CPU_CORES ))
 fi
 
 SOCKET=$(/usr/sbin/psrinfo -p)
@@ -39,7 +40,7 @@ SOCKET=$(/usr/sbin/psrinfo -p)
 if [ "$SOCKET" -gt "$CPU_CORES" ]; then
   CORES_PER_SOCKET=1 
 else 
-  CORES_PER_SOCKET=$(($CPU_CORES / $SOCKET))
+  CORES_PER_SOCKET=$(( CPU_CORES / SOCKET))
 fi
 
 CHECK_SUN_CLUSTER=$(ps -ef | grep -v grep | grep rpc.pmfd|wc -l)
