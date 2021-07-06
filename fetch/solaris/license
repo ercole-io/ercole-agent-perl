@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/ksh
 
 # Copyright (c) 2019 Sorint.lab S.p.A.
 #
@@ -74,7 +74,7 @@ exit
 EOF
 )
 
-CPU_THREAD=$( psrinfo | wc -l )
+CPU_THREAD=$( /usr/sbin/psrinfo | wc -l )
 if [ "$CPU_THREAD" = '1' ]; then
   CPU_CORES=1
 else 
@@ -84,17 +84,17 @@ fi
 CORE_FACTOR=0.5
 
 if [ "$DB_VERSION" = 'EXE' ]; then
-  echo "Oracle EXE; $(( CORE_FACTOR * CPU_CORES));"
+  echo "Oracle EXE; $(echo "$CORE_FACTOR*$CPU_CORES" |bc);"
 else
   echo "Oracle EXE;;"
 fi
 if [ "$DB_VERSION" = 'ENT' ]; then
-  echo "Oracle ENT; $(( CORE_FACTOR * CPU_CORES));"
+  echo "Oracle ENT; $(echo "$CORE_FACTOR*$CPU_CORES" |bc);"
 else
   echo "Oracle ENT;;"
 fi
 if [ "$DB_VERSION" = 'STD' ]; then
-  echo "Oracle STD; $(( CORE_FACTOR * CPU_CORES));"
+  echo "Oracle STD; $(echo "$CORE_FACTOR*$CPU_CORES" |bc);"
 else
   echo "Oracle STD;;"
 fi
