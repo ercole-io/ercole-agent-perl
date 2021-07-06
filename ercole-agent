@@ -24,7 +24,7 @@ use diagnostics;
 use lib "./lib/JSON";
 use lib "./lib/HTTP";
 
-# use lib "./lib/URI"; # needed by Solaris
+use lib "./lib/URI"; # needed only by Solaris
 
 use PP;
 use lib "./config";

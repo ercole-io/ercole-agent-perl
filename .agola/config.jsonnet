@@ -37,7 +37,16 @@ local task_pkg_build(setup) = {
         source /tmp/variables
         sed -i "s|ERCOLE_VERSION|${VERSION}|" ercole-agent
       |||,
-    },
+    }
+  ] + (
+      if setup.os == "solaris" then [] else [
+          {
+              type: 'run',
+              name: 'comment lib/URI',
+              command: 'sed -i \'/needed only by Solaris/s/use/# use/\' ercole-agent'
+          }
+      ]
+  ) + [
     {
       type: 'run',
       name: 'build',
