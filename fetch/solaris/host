@@ -19,7 +19,7 @@ HOSTNAME=$(hostname)
 KERNEL=$(uname -s)
 KERNEL_VERSION=$(uname -r)
 
-OS=$(uname -o)
+OS=$(uname)
 OS_VERSION=$(uname -v)
 CPU_MODEL=$(kstat cpu_info | grep "brand" | cut -c34- | head -n 1)
 CPU_SPEED=$(/usr/sbin/psrinfo -pv |  grep clock | sed 's/.* clock \([0-9]*\).*/\1/' | head -n 1)
