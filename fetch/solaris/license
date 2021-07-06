@@ -74,11 +74,11 @@ exit
 EOF
 )
 
-CPU_THREAD=$(nproc --all)
+CPU_THREAD=$( psrinfo | wc -l )
 if [ "$CPU_THREAD" = '1' ]; then
   CPU_CORES=1
 else 
-  CPU_CORES=$(( CPU_THREAD / 2 ))
+  CPU_CORES=$( kstat cpu_info|grep core_id|sort -u|wc -l )
 fi
 
 CORE_FACTOR=0.5
