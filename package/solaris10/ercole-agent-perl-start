@@ -1,0 +1,4 @@
+#!/bin/sh
+cd /opt/ercole-agent-perl || { echo "Failure"; exit 1; } 
+su - oracle -c "cd /opt/ercole-agent-perl && nohup ./ercole-agent &"
+

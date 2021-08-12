@@ -130,6 +130,12 @@ local task_deploy_repository(dist) = {
         task_pkg_build(setup)
         for setup in [
           {
+             os: 'solaris',
+             dist: 'solaris10',
+             fpm_target: 'tar',
+             package_specific_files: 'fetch/solaris=/opt/ercole-agent-perl/fetch package/solaris11/config.json=/opt/ercole-agent-perl/config.json package/solaris11/ercole-agent-perl-start=/lib/svc/method/ercole-agent-perl-start package/solaris11/ercole-agent-perl.xml=/var/svc/manifest/site/ercole-agent-perl.xml', 
+          },
+          {
              os: 'solaris', 
              dist: 'solaris11', 
              fpm_target: 'tar', 
@@ -150,7 +156,7 @@ local task_deploy_repository(dist) = {
         ]
       ] + [
           task_deploy_repository(dist)
-          for dist in ['solaris11', 'aix6.1', 'hpux']
+          for dist in ['solaris10', 'solaris11', 'aix6.1', 'hpux']
       ],
     },
   ],
