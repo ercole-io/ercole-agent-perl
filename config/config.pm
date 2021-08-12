@@ -30,11 +30,11 @@ sub ReadConfig{
     my $configFile = $baseDir . "/config.json";
 
     if (not(-e $configFile)){
-        $configFile = "/opt/ercole-agent/config.json";
+        $configFile = "/opt/ercole-agent-perl/config.json";
     }
 
     my $err = open(my $FHR, '<', $configFile)
-      or die "Cannot open the file or $!";
+      or die "Cannot open the file $configFile or $!";
 
     my @lines = <$FHR>; #file into array
 
