@@ -23,7 +23,6 @@ OS=$(uname)
 OS_VERSION=$(uname -v)
 CPU_MODEL=$(kstat cpu_info | grep "brand" | cut -c34- | head -n 1)
 CPU_SPEED=$(/usr/sbin/psrinfo -pv |  grep clock | sed 's/.* clock \([0-9]*\).*/\1/' | head -n 1)
-SWP_TOTAL=$(top -d1 | grep -i "total swap" | cut -d',' -f3 | cut -d' ' -f2 | sed 's/[^0-9]*//g')
 MEM_TOTAL=$(($(/usr/sbin/prtconf 2>&1 | grep "Memory" | sed -e 's/Memory size: \(.*\) Megabytes/\1/') / 1024))
 CPU_THREAD=$( /usr/sbin/psrinfo | wc -l )
 
@@ -84,7 +83,7 @@ kernelversion: $KERNEL_VERSION
 os: $OS
 osversion: $OS_VERSION
 memorytotal: $MEM_TOTAL
-swaptotal: $SWP_TOTAL
+swaptotal: 0
 oraclecluster: $ORACLE_CLUSTER
 veritascluster: $VERITAS_CLUSTER
 suncluster: $SUN_CLUSTER

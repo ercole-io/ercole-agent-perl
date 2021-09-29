@@ -133,7 +133,7 @@ local task_deploy_repository(dist) = {
              os: 'solaris',
              dist: 'solaris10',
              fpm_target: 'tar',
-             package_specific_files: 'fetch/solaris=/opt/ercole-agent-perl/fetch package/solaris11/config.json=/opt/ercole-agent-perl/config.json package/solaris11/ercole-agent-perl-start=/lib/svc/method/ercole-agent-perl-start package/solaris11/ercole-agent-perl.xml=/var/svc/manifest/site/ercole-agent-perl.xml', 
+             package_specific_files: 'fetch/solaris=/opt/ercole-agent-perl/fetch package/solaris10/config.json=/opt/ercole-agent-perl/config.json package/solaris10/ercole-agent-perl-start=/lib/svc/method/ercole-agent-perl-start package/solaris10/ercole-agent-perl.xml=/var/svc/manifest/site/ercole-agent-perl.xml',
           },
           {
              os: 'solaris', 
