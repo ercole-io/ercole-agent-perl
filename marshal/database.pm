@@ -119,6 +119,7 @@ sub Database {
         $db{'featureUsageStats'}=[];
         $db{'services'}=[];
         $db{'isCDB'}= \0; #special value that become JSON false, as JSON::PP::false
+        $db{'pdbs'}=[];
     }
 
     return %db;

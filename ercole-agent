@@ -141,12 +141,10 @@ sub buildData {
                     }
 
                     $database{'pdbs'} = \@pdbs;
-                } else {
-                    $database{'pdbs'} = [];
                 }
+
             } else {
                 $db{'isCDB'} = marshal::parseBool("FALSE");
-                $database{'pdbs'} = [];
             }
 
             if ($configuration{'forcestats'} eq "true") {
@@ -195,6 +193,8 @@ sub buildData {
         } elsif ($dbStatus =~ m/MOUNTED/) {
             $out = fetcher("dbmounted", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             my %database = marshal::Database($out);
+            $database{'licenses'} = getLicensesMountedDb( $database{'version'}, $info{'cpuCores'} );
+
             push (@databases, {%database});
         }
     }
@@ -336,6 +336,41 @@ sub fetchDbStatus {
     my $out = qx/$cmd $sid $oracleHome/ or die "UNREACHABLE";
 
     return $out;
+}
+
+
+sub getLicensesMountedDb {
+    my $version = shift;
+
+    my $coreFactor  = 1;
+    my $cpuCores    = shift;
+    my $numLicenses = $coreFactor * $cpuCores;
+
+    my %license;
+
+    $version = uc $version;
+
+    my $dbEdition = "";
+    if ( $version =~ /ENTERPRISE/ ) {
+        $dbEdition = "ENT";
+    }
+    elsif ( $version =~ /EXTREME/ ) {
+        $dbEdition = "EXE";
+    }
+    elsif ( $version =~ /EXPRESS/ ) {
+        $dbEdition = "XE";
+    }
+    else {
+        $dbEdition = "STD";
+    }
+
+    $license{'name'}  = "Oracle " . $dbEdition;
+    $license{'count'} = $numLicenses;
+
+    my @licenses;
+    push( @licenses, {%license} );
+
+    return \@licenses;
 }
 
 
