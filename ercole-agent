@@ -141,12 +141,10 @@ sub buildData {
                     }
 
                     $database{'pdbs'} = \@pdbs;
-                } else {
-                    $database{'pdbs'} = [];
                 }
+
             } else {
                 $db{'isCDB'} = marshal::parseBool("FALSE");
-                $database{'pdbs'} = [];
             }
 
             if ($configuration{'forcestats'} eq "true") {
