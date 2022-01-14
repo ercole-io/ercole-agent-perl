@@ -39,13 +39,13 @@ local task_pkg_build(setup) = {
       |||,
     }
   ] + (
-      if setup.os == "solaris" then [] else [
+      if setup.os != "solaris" then [
           {
               type: 'run',
               name: 'comment lib/URI',
               command: 'sed -i \'/needed only by Solaris/s/use/# use/\' ercole-agent'
           }
-      ]
+      ] else []
   ) + [
     {
       type: 'run',
