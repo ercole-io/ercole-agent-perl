@@ -31,10 +31,10 @@ col DCOL2_ new_val DCOL2 noprint
 define DCNA=to_char(NULL)
 col DCNA_ new_val DCNA noprint
 
--- select 'CDB_' as DFUS_, 'CON_ID' as DCID_, '(select NAME from V$CONTAINERS xz where xz.CON_ID=xy.CON_ID)' as DCNA_, 'XXXXXX' as DCOL1_, 'XXXXXX' as DCOL2_
---  from CDB_FEATURE_USAGE_STATISTICS
---  where exists (select 1 from V$DATABASE where CDB='YES')
---    and rownum=1;
+ select 'CDB_' as DFUS_, 'CON_ID' as DCID_, '(select NAME from V$CONTAINERS xz where xz.CON_ID=xy.CON_ID)' as DCNA_, 'XXXXXX' as DCOL1_, 'XXXXXX' as DCOL2_
+  from CDB_FEATURE_USAGE_STATISTICS
+  where exists (select 1 from V$DATABASE where CDB='YES')
+    and rownum=1;
 
 col GID     NOPRINT
 -- Hide CON_NAME column for non-Container Databases:

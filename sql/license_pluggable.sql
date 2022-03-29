@@ -1,4 +1,3 @@
-set colsep "|||"
 -- Copyright (c) 2021 Sorint.lab S.p.A.
 
 -- This program is free software: you can redistribute it and/or modify
@@ -14,8 +13,9 @@ set colsep "|||"
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-set feedback off pages 0 serverout on verify off lines 1234 timing off
-COL EXTRA_FEATURE_INFO for a30
+whenever sqlerror exit sql.sqlcode
+
+set feedback off pages 0 serverout on verify off lines 123 timing off
 -- Prepare settings for pre 12c databases
 define DFUS=DBA_
 col DFUS_ new_val DFUS noprint
@@ -31,10 +31,10 @@ col DCOL2_ new_val DCOL2 noprint
 define DCNA=to_char(NULL)
 col DCNA_ new_val DCNA noprint
 
--- select 'CDB_' as DFUS_, 'CON_ID' as DCID_, '(select NAME from V$CONTAINERS xz where xz.CON_ID=xy.CON_ID)' as DCNA_, 'XXXXXX' as DCOL1_, 'XXXXXX' as DCOL2_
---  from CDB_FEATURE_USAGE_STATISTICS
---  where exists (select 1 from V$DATABASE where CDB='YES')
---    and rownum=1;
+select 'CDB_' as DFUS_, 'CON_ID' as DCID_, '(select NAME from V$CONTAINERS xz where xz.CON_ID=xy.CON_ID)' as DCNA_, 'XXXXXX' as DCOL1_, 'XXXXXX' as DCOL2_
+  from CDB_FEATURE_USAGE_STATISTICS
+  where exists (select 1 from V$DATABASE where CDB='YES')
+    and rownum=1;
 
 col GID     NOPRINT
 -- Hide CON_NAME column for non-Container Databases:
@@ -46,11 +46,10 @@ define OCS='N'
 col OCS_ new_val OCS noprint
 select 'Y' as OCS_ from V$VERSION where BANNER like 'Oracle %Perf%';
 
-alter session set NLS_DATE_FORMAT="yyyy-mm-dd hh24:mi:ss";
+set feedback off pages 0 lines 123 colsep |
 
 with
 MAP as (
--- mapping between features tracked by DBA_FUS and their corresponding database products (options or packs)
 select '' PRODUCT, '' feature, '' MVERSION, '' CONDITION from dual union all
 SELECT 'Active Data Guard'                                   , 'Active Data Guard - Real-Time Query on Physical Standby' , '^11\.2|^1[289]\.|^2[0-9]\.'                   , ' '       from dual union all
 SELECT 'Active Data Guard'                                   , 'Global Data Services'                                    , '^1[289]\.|^2[0-9]\.'                          , ' '       from dual union all
@@ -158,30 +157,29 @@ select '' PRODUCT, '' FEATURE, '' MVERSION, '' CONDITION from dual
 FUS as (
 -- the current data set to be used: DBA_FEATURE_USAGE_STATISTICS or CDB_FEATURE_USAGE_STATISTICS for Container Databases(CDBs)
 select
-    &&DCID as CON_ID,
-    &&DCNA as CON_NAME,
-    -- Detect and mark with Y the current DBA_FUS data set = Most Recent Sample based on LAST_SAMPLE_DATE
-      case when DBID || '#' || VERSION || '#' || to_char(LAST_SAMPLE_DATE, 'YYYYMMDDHH24MISS') =
-                first_value (DBID    )         over (partition by &&DCID order by LAST_SAMPLE_DATE desc nulls last, DBID desc) || '#' ||
-                first_value (VERSION )         over (partition by &&DCID order by LAST_SAMPLE_DATE desc nulls last, DBID desc) || '#' ||
-                first_value (to_char(LAST_SAMPLE_DATE, 'YYYYMMDDHH24MISS'))
-                                               over (partition by &&DCID order by LAST_SAMPLE_DATE desc nulls last, DBID desc)
-           then 'Y'
-           else 'N'
-    end as CURRENT_ENTRY,
-    NAME            ,
-    LAST_SAMPLE_DATE,
-    DBID            ,
-    VERSION         ,
-    DETECTED_USAGES ,
-    TOTAL_SAMPLES   ,
-    CURRENTLY_USED  ,
-    FIRST_USAGE_DATE,
-    LAST_USAGE_DATE ,
-    AUX_COUNT       ,
-    FEATURE_INFO
-from &&DFUS.FEATURE_USAGE_STATISTICS xy
-),
+&&DCID as CON_ID,
+&&DCNA as CON_NAME,
+-- Detect and mark with Y the current DBA_FUS data set = Most Recent Sample based on LAST_SAMPLE_DATE
+  case when DBID || '#' || VERSION || '#' || to_char(LAST_SAMPLE_DATE, 'YYYYMMDDHH24MISS') =
+            first_value (DBID    )         over (partition by &&DCID order by LAST_SAMPLE_DATE desc nulls last, DBID desc) || '#' ||
+            first_value (VERSION )         over (partition by &&DCID order by LAST_SAMPLE_DATE desc nulls last, DBID desc) || '#' ||
+            first_value (to_char(LAST_SAMPLE_DATE, 'YYYYMMDDHH24MISS'))
+                                           over (partition by &&DCID order by LAST_SAMPLE_DATE desc nulls last, DBID desc)
+       then 'Y'
+       else 'N'
+end as CURRENT_ENTRY,
+NAME            ,
+LAST_SAMPLE_DATE,
+DBID            ,
+VERSION         ,
+DETECTED_USAGES ,
+TOTAL_SAMPLES   ,
+CURRENTLY_USED  ,
+FIRST_USAGE_DATE,
+LAST_USAGE_DATE ,
+AUX_COUNT       ,
+FEATURE_INFO
+from &&DFUS.FEATURE_USAGE_STATISTICS xy),
 PFUS as (
 -- Product-Feature Usage Statitsics = DBA_FUS entries mapped to their corresponding database products
 select
@@ -263,7 +261,7 @@ select m.PRODUCT, m.CONDITION, m.MVERSION,
             when CONDITION = 'C003'
                  then   'AUX_COUNT=' || AUX_COUNT
             when CONDITION = 'C005'
-                 then   'AUX_COUNT=' || AUX_COUNT
+                 then   'AUX_COUNT=' || AUX_COUNT     
             when CONDITION = 'C004' and '&&OCS'= 'Y'
                  then   'feature included in Oracle Cloud Services Package'
             else ''
@@ -284,22 +282,69 @@ select m.PRODUCT, m.CONDITION, m.MVERSION,
        f.FEATURE_INFO
   from MAP m
   join FUS f on m.FEATURE = f.NAME and regexp_like(f.VERSION, m.MVERSION)
-  where nvl(f.TOTAL_SAMPLES, 0) > 0                        -- ignore features that have never been sampled
+  where nvl(f.TOTAL_SAMPLES, 0) > 0   and   f.DBID=(select dbid from v$database)                     -- ignore features that have never been sampled
 )
   where nvl(CONDITION, '-') != 'INVALID'                   -- ignore features for which licensing is not required without further conditions
     and not (CONDITION in ('C003', 'C005') and CON_ID not in (0, 1))  -- multiple PDBs are visible only in CDB$ROOT; PDB level view is not relevant
-)
+),
+TAB as (
 select
-    PRODUCT           ,
-    FEATURE_BEING_USED,
-    DETECTED_USAGES   ,
-    CURRENTLY_USED    ,
-    FIRST_USAGE_DATE  ,
-    LAST_USAGE_DATE   ,
-    EXTRA_FEATURE_INFO
-  from PFUS
-  where USAGE in ('4.PAST_USAGE', '5.PAST_OR_CURRENT_USAGE', '6.CURRENT_USAGE')  -- ignore '1.NO_PAST_USAGE'
-order by CON_ID, decode(substr(PRODUCT, 1, 1), '.', 2, 1), PRODUCT, FEATURE_BEING_USED, LAST_SAMPLE_DATE desc, PFUS.USAGE
-;
+    grouping_id(p.CON_ID) as gid,
+    p.CON_ID   ,
+    decode(grouping_id(p.CON_ID), 1, '--ALL--', max(p.CON_NAME)) as CON_NAME,
+    m.PRODUCT  ,
+    decode(max(p.USAGE),
+          '1.NO_PAST_USAGE'        , ''            ,
+          '2.NO_CURRENT_USAGE'    , ''           ,
+          '3.SUPPRESSED_DUE_TO_BUG', '',
+          '4.PAST_USAGE'        , '1'           ,
+          '5.PAST_OR_CURRENT_USAGE', '1',
+          '6.CURRENT_USAGE'        , '1'        ,
+          '') as USAGE
+  from MAP m left join PFUS p on m.PRODUCT=p.PRODUCT
+  --where USAGE in ('2.NO_CURRENT_USAGE', '4.PAST_USAGE', '5.PAST_OR_CURRENT_USAGE', '6.CURRENT_USAGE')   -- ignore ''1.NO_PAST_USAGE'', ''3.SUPPRESSED_DUE_TO_BUG''
+  group by rollup(CON_ID), m.PRODUCT
+  having not (max(CON_ID) in (-1, 0) and grouping_id(CON_ID) = 1)            -- aggregation not needed for non-container databases
+order by decode(substr(m.PRODUCT, 1, 1), '.', 2, 1), m.PRODUCT),
+FILTERCONID as (
+select * from tab where con_id is null
+)
+select distinct LTRIM(product,'.')||';'||
+case 
+   when (select UPPER(banner) from v$version where rownum=1) like '%EXTREME%' or (select UPPER(banner) from v$version where rownum=1) like '%ENTERPRISE%' 
+   then
+      case 
+ 	     when (select version from v$instance) like '12%' and (select usage from FILTERCONID where LTRIM(product,'.') like 'Real Application Clusters') is NOT NULL and (select usage from FILTERCONID where LTRIM(product,'.') like 'Real Application Clusters One Node') is NOT NULL 
+ 	     then
+              case 
+			     when LTRIM(product,'.') like 'Real Application Clusters' 
+ 	     	     then ''||';'
+                 else to_char(((to_number(usage,'99999.99',' NLS_NUMERIC_CHARACTERS = '',.''')*&1)*&2),'990.0')||';'
+              end
+         when (select version from v$instance) like '11%' and (select usage from FILTERCONID where LTRIM(product,'.') like 'Real Application Clusters') is NOT NULL and '&3'='xOne' and (select count(*) from gv$instance) = 1 
+ 	     then 
+              case 
+                  when LTRIM(product,'.') like 'Real Application Clusters One Node' 
+ 	     	      then to_char(((to_number('1','99999.99',' NLS_NUMERIC_CHARACTERS = '',.''')*&1)*&2),'990.0')||';'
+                  when LTRIM(product,'.') like 'Real Application Clusters' 
+ 	     	      then ''||';'
+                  else to_char(((to_number(usage,'99999.99',' NLS_NUMERIC_CHARACTERS = '',.''')*&1)*&2),'990.0')||';' 
+ 	     	  end
+          when LTRIM(product,'.') like 'Advanced Compression' and usage is NULL and ((select count(*) from &&DFUS.tables where owner not in('SYS','SYSMAN','SYSTEM','APEX%') and compress_for not in ('NULL','BASIC'))>0 or (select count(*) from &&DFUS.tab_partitions where table_owner not in('SYS','SYSMAN','SYSTEM','APEX%') and compress_for not in ('NULL','BASIC'))>0 or (select count(*) from &&DFUS.tab_subpartitions where table_owner not in('SYS','SYSMAN','SYSTEM','APEX%') and compress_for not in ('NULL','BASIC'))>0)
+          then 
+		  to_char(((to_number('1','99999.99',' NLS_NUMERIC_CHARACTERS = '',.''')*&1)*&2),'990.0')||';'
+          when LTRIM(product,'.') like 'Partitioning' and usage is NULL and (select count(*) from &&DFUS.tables where partitioned = 'YES' and owner not in ('SYS','SYSTEM','AUDSYS','MDSYS'))>0
+          then 
+		  to_char(((to_number('1','99999.99',' NLS_NUMERIC_CHARACTERS = '',.''')*&1)*&2),'990.0')||';'
+																									WHEN LTRIM(product,'.') LIKE 'Active Data Guard'
+                                                                                                        AND (select usage from FILTERCONID where LTRIM(product,'.') LIKE 'GoldenGate' )>0
+                                                                                                        THEN ''||';'
+          else 
+		  to_char(((to_number(usage,'99999.99',' NLS_NUMERIC_CHARACTERS = '',.''')*&1)*&2),'990.0')||';' 
+      end	
+       else
+       to_char(((to_number(usage,'99999.99',' NLS_NUMERIC_CHARACTERS = '',.''')*&1)*&2),'990.0')||';' 
+end
+as a from FILTERCONID where product is not null order by a desc;
 
-exit 
+exit
