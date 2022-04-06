@@ -15,7 +15,7 @@
 
 whenever sqlerror exit sql.sqlcode
 
-set feedback off pages 0 serverout on verify off lines 123 timing off
+set feedback off pages 0 serverout on verify off lines 123 timing off termout off
 -- Prepare settings for pre 12c databases
 define DFUS=DBA_
 col DFUS_ new_val DFUS noprint
@@ -47,7 +47,7 @@ col OCS_ new_val OCS noprint
 select 'Y' as OCS_ from V$VERSION where BANNER like 'Oracle %Perf%';
 
 set feedback off pages 0 lines 123 colsep |
--- spool &3 APPEND
+set termout on
 with
 MAP as (
 select '' PRODUCT, '' feature, '' MVERSION, '' CONDITION from dual union all
