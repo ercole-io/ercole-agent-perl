@@ -14,7 +14,7 @@ set colsep "|||"
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-set feedback off pages 0 serverout on verify off lines 1234 timing off
+set feedback off pages 0 serverout on verify off lines 1234 timing off termout off
 COL EXTRA_FEATURE_INFO for a30
 -- Prepare settings for pre 12c databases
 define DFUS=DBA_
@@ -47,7 +47,7 @@ col OCS_ new_val OCS noprint
 select 'Y' as OCS_ from V$VERSION where BANNER like 'Oracle %Perf%';
 
 alter session set NLS_DATE_FORMAT="yyyy-mm-dd hh24:mi:ss";
-
+set termout on
 with
 MAP as (
 -- mapping between features tracked by DBA_FUS and their corresponding database products (options or packs)
