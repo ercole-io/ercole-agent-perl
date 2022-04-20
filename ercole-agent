@@ -107,7 +107,7 @@ sub buildData {
         my %dbEntry = %$db;
         my $dbStatus = fetchDbStatus($dbEntry{"dbName"}, $dbEntry{"oracleHome"});
 
-        if ($dbStatus =~ m/OPEN/) {
+        if ($dbStatus =~ m/READ WRITE/ || $dbStatus =~ m/READ ONLY/) {
             my %database;
             my $outVersion = fetcher("dbversion", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             my ($dbVersion, $b, $c, $d) = split /\./, $outVersion;
@@ -190,7 +190,7 @@ sub buildData {
 
             push (@databases, {%database});
 
-        } elsif ($dbStatus =~ m/MOUNTED/) {
+        } elsif ($dbStatus =~ m/MOUNTED/ || $dbStatus =~ m/READ ONLY WITH APPLY/) {
             $out = fetcher("dbmounted", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             my %database = marshal::Database($out);
             $database{'licenses'} = getLicensesMountedDb( $database{'version'}, $info{'cpuCores'} );
