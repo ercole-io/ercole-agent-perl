@@ -46,6 +46,8 @@ file ../../fetch/license path=opt/ercole-agent/fetch/license owner=root \
     group=bin mode=0755
 file ../../fetch/listpdb path=opt/ercole-agent/fetch/listpdb owner=root \
     group=bin mode=0644
+file ../../fetch/grant_dba path=opt/ercole-agent/fetch/grant_dba \
+    owner=root group=bin mode=0755    
 file ../../fetch/opt path=opt/ercole-agent/fetch/opt owner=root group=bin \
     mode=0755
 file ../../fetch/oratab path=opt/ercole-agent/fetch/oratab owner=root \
@@ -561,6 +563,8 @@ file ../../sql/license.sql path=opt/ercole-agent/sql/license.sql owner=root \
     group=bin mode=0644
 file ../../sql/listpdb.sql path=opt/ercole-agent/sql/listpdb.sql owner=root \
     group=bin mode=0644
+file ../../fetch/grant_dba.sql path=opt/ercole-agent/fetch/grant_dba.sql \
+    owner=root group=bin mode=0644    
 file ../../sql/opt.sql path=opt/ercole-agent/sql/opt.sql owner=root group=bin \
     mode=0644
 file ../../sql/patch-12.sql path=opt/ercole-agent/sql/patch-12.sql owner=root \
