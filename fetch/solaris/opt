@@ -49,7 +49,7 @@ export PATH=$HOME/bin:$PATH
 if [ $DBV == "10" ] || [ $DBV == "9" ]; then
     sqlplus -S "/ AS SYSDBA" @${ERCOLE_HOME}/sql/opt.sql 
 elif [ $DBV == "11" ]; then 
-    sqlplus -S "/ AS SYSDBA" @${ERCOLE_HOME}/opt.sql 
+    sqlplus -S "/ AS SYSDBA" @${ERCOLE_HOME}/sql/opt.sql 
 else
 IS_PDB=$(
     sqlplus -S / as sysdba <<EOF
