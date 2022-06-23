@@ -125,6 +125,10 @@ sub buildData {
                     $out = fetcher("listpdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
                     my @pdbs = marshal::ListPDBs($out);
 
+                    my $totalSegmentsSize = 0;
+                    my $totalDatafileSize = 0; 
+                    my $totalAllocable = 0;
+
                     for (my $i = 0; $i<scalar(@pdbs); $i++) {
 
                         if ($pdbs[$i]{"status"} eq "MOUNTED"){
@@ -134,6 +138,15 @@ sub buildData {
 
                             next;
                         }
+
+                        $out = fetcher("size_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+                        ($segmentsSize, $datafileSize, $allocable) = marshal::Sizepdb($out);
+                        $pdbs[$i]{"segmentsSize"} = $segmentsSize;
+                        $pdbs[$i]{"datafileSize"} = $datafileSize;
+                        $pdbs[$i]{"allocable"} = $allocable;
+                        $totalSegmentsSize = $totalSegmentsSize + $segmentsSize;
+                        $totalDatafileSize = $totalDatafileSize + $datafileSize;
+                        $totalAllocable = $totalAllocable + $allocable;
 
                         $out = fetcher("tablespace_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
                         $pdbs[$i]{"tablespaces"} = marshal::Tablespaces($out);
@@ -146,6 +159,10 @@ sub buildData {
                     }
 
                     $database{'pdbs'} = \@pdbs;
+
+                    $database{'segmentsSize'} = $totalSegmentsSize;
+                    $database{'datafileSize'} = $totalDatafileSize;
+                    $database{'allocable'} = $totalAllocable;
                 }
 
             } else {
