@@ -140,7 +140,7 @@ sub buildData {
                         }
 
                         $out = fetcher("size_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
-                        ($segmentsSize, $datafileSize, $allocable) = marshal::Sizepdb($out);
+                        my ($segmentsSize, $datafileSize, $allocable) = marshal::Sizepdb($out);
                         $pdbs[$i]{"segmentsSize"} = $segmentsSize;
                         $pdbs[$i]{"datafileSize"} = $datafileSize;
                         $pdbs[$i]{"allocable"} = $allocable;
