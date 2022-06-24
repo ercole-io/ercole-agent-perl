@@ -37,7 +37,6 @@ SELECT
         (SELECT round(sum(bytes/1024/1024/1024))
         FROM v$log)
     )
-
 FROM dual;
 
 exit
