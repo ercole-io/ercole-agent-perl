@@ -241,6 +241,7 @@ sub buildData {
     }
     $hostData{'location'} = $configuration{'location'};
     $hostData{'environment'} = $configuration{'envtype'};
+    $hostData{'period'} = $configuration{'frequency'};
     $hostData{'tags'}=[];
     $hostData{'agentVersion'} = $version;
     $hostData{'schemaVersion'} = $hostDataSchemaVersion;
