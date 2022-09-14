@@ -48,6 +48,7 @@ use psu;
 use backup;
 use grant_dba;
 use size_pdb;
+use charset_pdb;
 use LWP;
 use MIME::Base64;
 use lib "./logger";
@@ -140,7 +141,7 @@ sub buildData {
                             next;
                         }
 
-                        $out = fetcher("size_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+                        $out = fetcher("size_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
                         my ($segmentsSize, $datafileSize, $allocable) = marshal::Sizepdb($out);
                         $pdbs[$i]{"segmentsSize"} = $segmentsSize;
                         $pdbs[$i]{"datafileSize"} = $datafileSize;
@@ -149,6 +150,9 @@ sub buildData {
                         $totalDatafileSize = $totalDatafileSize + $datafileSize;
                         $totalAllocable = $totalAllocable + $allocable;
 
+                        $out = fetcher("charset_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
+                        $pdbs[$i]{"charset"} = marshal::Charsetpdb($out);
+                        
                         $out = fetcher("tablespace_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
                         $pdbs[$i]{"tablespaces"} = marshal::Tablespaces($out);
 

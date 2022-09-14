@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/usr/bin/perl
 
 # Copyright (c) 2022 Sorint.lab S.p.A.
 #
@@ -15,30 +15,35 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SID=$1
-HOME=$2
-PDB=$3
+package marshal;
 
-if [ -z "$SID" ]; then
-  echo "Missing SID parameter"
-  exit 1
-fi
-if [ -z "$HOME" ]; then
-  echo "Missing ORACLE_HOME parameter"
-  exit 1
-fi
-if [ -z "$PDB" ]; then
-  echo "Missing PDB parameter"
-  exit 1
-fi
+use strict;
+use warnings;
+use diagnostics;
+use lib "./marshal";
+use common;
 
-ERCOLE_HOME=$(dirname "$0")
-ERCOLE_HOME="$(dirname "$ERCOLE_HOME")"
-ERCOLE_HOME="$(dirname "$ERCOLE_HOME")"
+# Charsetpdb returns PDB charset value from the output of the charset_pdb fetcher command.
 
-export ORAENV_ASK=NO 
-export ORACLE_SID=$SID
-export ORACLE_HOME=$HOME
-export PATH=$HOME/bin:$PATH
+sub Charsetpdb {
+    no warnings 'uninitialized';
+    my $cmdOutput = shift;
+    my $charsetPDB;
 
-sqlplus -S "/ AS SYSDBA" < ${ERCOLE_HOME}/sql/size_pdb.sql $PDB
+    for my $c (split /\n/, $cmdOutput) {
+        my $line = $c;
+        
+        my @values = split (/\|\|\|/, $line);
+        if ( scalar @values ne 1 ) {
+            next;
+        }
+
+        my ($charset) = split (/\|\|\|/, $line);
+
+        $charsetPDB=trim($charset);
+    }
+
+    return $charsetPDB;
+}
+
+1;
