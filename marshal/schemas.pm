@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (c) 2019 Sorint.lab S.p.A.
+# Copyright (c) 2022 Sorint.lab S.p.A.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,17 +32,19 @@ sub Schemas {
     for my $c (split /\n/, $cmdOutput) {
         my %schema;
         my $line = $c;
-        my (undef, undef, undef, $user, $total, $tables, $indexes, $lob) = split /\|\|\|/, $line;
+        my (undef, undef, undef, $user, $total, $tables, $indexes, $lob, $accountStatus) = split /\|\|\|/, $line;
         $user=trim($user);
         $total=parseInt(trim($total));
         $tables=parseInt(trim($tables));
         $indexes=parseInt(trim($indexes));
         $lob=parseInt(trim($lob));
+        $accountStatus=trim($accountStatus);
         $schema{'user'} = $user;
         $schema{'total'} = $total;
         $schema{'tables'} = $tables;
         $schema{'indexes'} = $indexes;
         $schema{'lob'} = $lob;
+        $schema{'accountStatus'} = $accountStatus;
 
         push(@schemas, {%schema});
     }
