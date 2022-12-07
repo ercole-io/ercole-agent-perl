@@ -66,6 +66,8 @@ file ../../fetch/schema_pdb path=opt/ercole-agent/fetch/schema_pdb owner=root \
     group=bin mode=0644
 file ../../fetch/segmentadvisor path=opt/ercole-agent/fetch/segmentadvisor \
     owner=root group=bin mode=0755
+file ../../fetch/segmentadvisor_pdb path=opt/ercole-agent/fetch/segmentadvisor_pdb \
+    owner=root group=bin mode=0755    
 file ../../fetch/stats path=opt/ercole-agent/fetch/stats owner=root group=bin \
     mode=0755
 file ../../fetch/tablespace path=opt/ercole-agent/fetch/tablespace owner=root \
@@ -590,6 +592,9 @@ file ../../sql/schema_pdb.sql path=opt/ercole-agent/sql/schema_pdb.sql \
 file ../../sql/segment_advisor.sql \
     path=opt/ercole-agent/sql/segment_advisor.sql owner=root group=bin \
     mode=0644
+file ../../sql/segment_advisor_pdb.sql \
+    path=opt/ercole-agent/sql/segment_advisor_pdb.sql owner=root group=bin \
+    mode=0644    
 file ../../sql/stats.sql path=opt/ercole-agent/sql/stats.sql owner=root \
     group=bin mode=0644
 file ../../sql/ts.sql path=opt/ercole-agent/sql/ts.sql owner=root group=bin \
