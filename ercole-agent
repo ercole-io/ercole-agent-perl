@@ -136,6 +136,7 @@ sub buildData {
                         if ($pdbs[$i]{"status"} eq "MOUNTED"){
                             $pdbs[$i]{"tablespaces"} = [];
                             $pdbs[$i]{"schemas"} = [];
+                            $pdbs[$i]{"segmentAdvisors"} = [];
                             $pdbs[$i]{"grantDba"} = [];
 
                             next;
@@ -158,6 +159,9 @@ sub buildData {
 
                         $out = fetcher("schema_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
                         $pdbs[$i]{"schemas"} = marshal::Schemas($out);
+
+                        $out = fetcher("segmentadvisor_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
+                        $pdbs[$i]{"segmentAdvisors"} = marshal::SegmentAdvisor($out);
 
                         $out = fetcher("grant_dba", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
                         $database{'grantDba'} = marshal::GrantDba($out);
