@@ -49,7 +49,6 @@ use backup;
 use grant_dba;
 use size_pdb;
 use charset_pdb;
-use segmentadvisor_pdb;
 use LWP;
 use MIME::Base64;
 use lib "./logger";
