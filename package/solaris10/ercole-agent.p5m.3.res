@@ -74,6 +74,10 @@ file ../../fetch/tablespace path=opt/ercole-agent/fetch/tablespace owner=root \
     group=bin mode=0755
 file ../../fetch/tablespace_pdb path=opt/ercole-agent/fetch/tablespace_pdb \
     owner=root group=bin mode=0644
+file ../../fetch/partitioning path=opt/ercole-agent/fetch/partitioning \
+    owner=root group=bin mode=0755
+file ../../fetch/partitioning_pdb \
+    path=opt/ercole-agent/fetch/partitioning_pdb owner=root group=bin mode=0644    
 file ../../fetch/running-databases path=opt/ercole-agent/fetch/running-databases \
     owner=root group=bin mode=0755
 dir  path=opt/ercole-agent/lib owner=root group=bin mode=0755
@@ -601,6 +605,10 @@ file ../../sql/ts.sql path=opt/ercole-agent/sql/ts.sql owner=root group=bin \
     mode=0644
 file ../../sql/ts_pdb.sql path=opt/ercole-agent/sql/ts_pdb.sql owner=root \
     group=bin mode=0644
+file ../../sql/partitioning.sql path=opt/ercole-agent/sql/partitioning.sql owner=root \
+    group=bin mode=0644
+file ../../sql/partitioning_pdb.sql path=opt/ercole-agent/sql/partitioning_pdb.sql \
+    owner=root group=bin mode=0644      
 depend fmri=pkg:/runtime/perl-522@5.22.1.1-11.4.0.0.1.14.0 type=require
 depend fmri=pkg:/shell/ksh93@93.21.1.20120801-11.4.0.0.1.14.0 type=require
 depend fmri=pkg:/system/core-os@11.4-11.4.0.0.1.15.0 type=require
