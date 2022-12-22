@@ -49,6 +49,7 @@ use backup;
 use grant_dba;
 use size_pdb;
 use charset_pdb;
+use partitioning;
 use LWP;
 use MIME::Base64;
 use lib "./logger";
@@ -165,6 +166,9 @@ sub buildData {
 
                         $out = fetcher("grant_dba", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
                         $database{'grantDba'} = marshal::GrantDba($out);
+
+                        $out = fetcher("partitioning_pdb", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $pdbs[$i]{"name"});
+                        $database{'partitionings'} = marshal::Partitioning($out);
                     }
 
                     $database{'pdbs'} = \@pdbs;
@@ -221,6 +225,9 @@ sub buildData {
 
             $out = fetcher("grant_dba", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             $database{'grantDba'} = marshal::GrantDba($out);
+
+            $out = fetcher("partitioning", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
+            $database{'partitionings'} = marshal::Partitioning($out);
 
             push (@databases, {%database});
 
