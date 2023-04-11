@@ -288,6 +288,12 @@ sub sendData {
         logger::printLn($b . "\n");
     }
 
+    use Sys::Hostname;
+    my $host = hostname;
+    my $filename = "/tmp/hostdata_${host}.json";
+    open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
+    print $fh $b;
+    close $fh;
 
     my $url = "$configuration{'serverurl'}/hosts";
 
