@@ -116,7 +116,7 @@ sub buildData {
             my $outVersion = fetcher("dbversion", $dbEntry{"dbName"}, $dbEntry{"oracleHome"});
             my ($dbVersion, $b, $c, $d) = split /\./, $outVersion;
 
-            $out = fetcher("db", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $configuration{'AWR'});
+            $out = fetcher("db", $dbEntry{"dbName"}, $dbEntry{"oracleHome"}, $configuration{'AWR'}, $dbVersion);
             %database = marshal::Database($out);
 
 

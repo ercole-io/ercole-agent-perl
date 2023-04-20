@@ -42,7 +42,6 @@ lobmb as
 select 
 	   (select host_name from v$instance) as Hostname,
            (select value from v$parameter where name='db_name') as Nome_DB,
-           (select db_unique_name from v$database) as DB_Unique_name,
 	   u.username,
 	   nvl(round(sum(s.bytes/1024/1024)),0) as "TOTMB",
 	   nvl(t.A,0) as "TBMB",
