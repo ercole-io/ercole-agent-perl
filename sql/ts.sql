@@ -24,7 +24,6 @@ column "% USED" format 99990.00
 select 
 	   (select host_name from v$instance) as Hostname,
            (select value from v$parameter where name='db_name') as Nome_DB,
-           (select db_unique_name from v$database) as DB_Unique_name,
 	   a.tablespace_name,
        a.bytes_alloc/(1024*1024) "TOTAL ALLOC (MB)",
        a.physical_bytes/(1024*1024) "TOTAL PHYS ALLOC (MB)",

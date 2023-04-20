@@ -18,6 +18,7 @@
 SID=$1
 HOME=$2
 AWR=$3
+DBV=$4
 
 if [ -z "$SID" ]; then
   echo "Missing SID parameter"
@@ -31,6 +32,10 @@ if [ -z "$AWR" ]; then
   echo "Missing AWR parameter"
   exit 1
 fi
+if [ -z "$DBV" ]; then
+  echo "Missing DBV parameter"
+  exit 1
+fi
 
 ERCOLE_HOME=$(dirname "$0")
 ERCOLE_HOME="$(dirname "$ERCOLE_HOME")"
@@ -42,4 +47,8 @@ export ORACLE_SID=$SID
 export ORACLE_HOME=$HOME
 export PATH=$HOME/bin:$PATH
 
-sqlplus -S "/ AS SYSDBA" @${ERCOLE_HOME}/sql/db.sql $AWR
+if [ $DBV -lt 10 ]; then
+    sqlplus -S "/ AS SYSDBA" @${ERCOLE_HOME}/sql/db-9.sql $AWR
+else
+    sqlplus -S "/ AS SYSDBA" @${ERCOLE_HOME}/sql/db.sql $AWR
+fi
