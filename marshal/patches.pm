@@ -32,7 +32,7 @@ sub Patches {
     for my $c (split /\n/, $cmdOutput) {
         my %patch;
         my $line = $c;
-        my (undef, undef, undef, undef, $version, $patchID, $action, $description, $date) = split /\|\|\|/, $line;
+        my (undef, undef, undef, $version, $patchID, $action, $description, $date) = split /\|\|\|/, $line;
         $version=trim($version);
 
         my $p = trim($patchID);

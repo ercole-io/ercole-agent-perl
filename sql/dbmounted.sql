@@ -20,6 +20,7 @@ select
 (select value from v$parameter where name='db_name') as Nome_DB,
 (SELECT dbid FROM v$database) AS DBID,
 (SELECT DATABASE_ROLE FROM v$database) AS DBROLE,
+(select db_unique_name from v$database) as DB_Unique_name,
 (select instance_number from v$instance) as Instance_number,
 (select instance_name from v$instance) AS Instance_name,
 (select open_mode from v$database) as DB_Status,

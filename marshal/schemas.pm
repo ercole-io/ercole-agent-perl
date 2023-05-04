@@ -32,7 +32,7 @@ sub Schemas {
     for my $c (split /\n/, $cmdOutput) {
         my %schema;
         my $line = $c;
-        my (undef, undef, undef, $user, $total, $tables, $indexes, $lob, $accountStatus) = split /\|\|\|/, $line;
+        my (undef, undef, $user, $total, $tables, $indexes, $lob, $accountStatus) = split /\|\|\|/, $line;
         $user=trim($user);
         $total=parseInt(trim($total));
         $tables=parseInt(trim($tables));

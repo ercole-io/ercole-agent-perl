@@ -33,7 +33,7 @@ sub Tablespaces {
     for my $c (split /\n/, $cmdOutput) {
         my %tablespace;
         my $line = $c;
-        my (undef, undef, undef, $name, $maxSize, $total, $used, $usedPerc, $status) = split /\|\|\|/, $line;
+        my (undef, undef, $name, $maxSize, $total, $used, $usedPerc, $status) = split /\|\|\|/, $line;
         $name=trim($name);
         $maxSize=parseNumber(trim($maxSize));
         $total=parseNumber(trim($total));
