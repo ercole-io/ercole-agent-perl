@@ -32,7 +32,7 @@ export ORACLE_SID=$SID
 export ORACLE_HOME=$HOME
 export PATH=$HOME/bin:$PATH
 
-DB_VERSION=$(sqlplus -S / as sysdba << EOF
+DB_VERSION=$(sqlplus -S "/ AS SYSDBA" << EOF
 set pages 0 feedback off
 select version from v\$instance;
 exit

@@ -53,21 +53,21 @@ export PATH=$HOME/bin:$PATH
 
 S_VERSION="select (case when UPPER(banner) like '%EXTREME%' then 'EXE' when UPPER(banner) like '%ENTERPRISE%' then 'ENT' else 'STD' end) as versione from v\$version where rownum=1;"
 
-DB_VERSION=$(sqlplus -S / as sysdba << EOF
+DB_VERSION=$(sqlplus -S "/ AS SYSDBA" << EOF
 set pages 0 feedback off
 ${S_VERSION}
 exit
 EOF
 )
 
-DB_NAME=$(sqlplus -S / as sysdba << EOF
+DB_NAME=$(sqlplus -S "/ AS SYSDBA" << EOF
 set pages 0 feedback off
 select name from v\$database;
 exit
 EOF
 )
 
-DB_ONE=x$(sqlplus -S / as sysdba << EOF
+DB_ONE=x$(sqlplus -S "/ AS SYSDBA" << EOF
 set pages 0 feedback off
 HOST srvctl config database -d $DB_NAME |grep -i One
 exit
@@ -133,7 +133,7 @@ elif [ $DBV == "11" ]; then
     sqlplus -S "/ AS SYSDBA" @${ERCOLE_HOME}/sql/license.sql $CPU_THREAD "$FACTOR" $DB_ONE
 else
 IS_PDB=$(
-    sqlplus -S / as sysdba <<EOF
+    sqlplus -S "/ AS SYSDBA" <<EOF
 set pages 0 feedback off timing off
 SELECT CASE WHEN COUNT(*) > 0 THEN 1 WHEN count(*) = 0 THEN 0 END FROM v\$pdbs;
 exit

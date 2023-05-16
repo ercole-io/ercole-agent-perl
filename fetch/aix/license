@@ -51,7 +51,7 @@ export ORACLE_HOME=$HOME
 export PATH=$HOME/bin:$PATH
 
 fn() {
-  sqlplus -S / as sysdba << EOF
+  sqlplus -S "/ AS SYSDBA" << EOF
     set pages 0 feedback off
     select (case when UPPER(banner) like '%EXTREME%' then 'EXE' when UPPER(banner) like '%ENTERPRISE%' then 'ENT' else 'EXE' end) as versione from v\$version where rownum=1;
     exit
@@ -60,14 +60,14 @@ EOF
 
 DB_VERSION=$(fn)
 
-DB_NAME=$(sqlplus -S / as sysdba << EOF
+DB_NAME=$(sqlplus -S "/ AS SYSDBA" << EOF
 set pages 0 feedback off
 select name from v\$database;
 exit
 EOF
 )
 
-DB_ONE=x$(sqlplus -S / as sysdba << EOF
+DB_ONE=x$(sqlplus -S "/ AS SYSDBA" << EOF
 set pages 0 feedback off
 HOST srvctl config database -d $DB_NAME |grep -i One
 exit
@@ -101,7 +101,7 @@ elif [ $DBV == "11" ]; then
     sqlplus -S "/ AS SYSDBA" @${ERCOLE_HOME}/sql/license.sql $LICENSING_CPU_CORES $FACTOR $DB_ONE
 else
 IS_PDB=$(
-    sqlplus -S / as sysdba <<EOF
+    sqlplus -S "/ AS SYSDBA" <<EOF
 set pages 0 feedback off timing off
 SELECT CASE WHEN COUNT(*) > 0 THEN 1 WHEN count(*) = 0 THEN 0 END FROM v\$pdbs;
 exit
