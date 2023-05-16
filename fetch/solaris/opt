@@ -52,7 +52,7 @@ elif [ $DBV == "11" ]; then
     sqlplus -S "/ AS SYSDBA" @${ERCOLE_HOME}/sql/opt.sql 
 else
 IS_PDB=$(
-    sqlplus -S / as sysdba <<EOF
+    sqlplus -S "/ AS SYSDBA" <<EOF
 set pages 0 feedback off timing off
 SELECT CASE WHEN COUNT(*) > 0 THEN 1 WHEN count(*) = 0 THEN 0 END FROM v\$pdbs;
 exit

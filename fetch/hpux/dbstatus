@@ -38,7 +38,7 @@ if [ "$RUNNING" -eq "0" ]; then
   exit 0
 fi
 
-DB_STATUS=$(sqlplus -S / as sysdba << EOF
+DB_STATUS=$(sqlplus -S "/ AS SYSDBA" << EOF
 set pages 0 feedback off
 select open_mode from v\$database;
 exit
