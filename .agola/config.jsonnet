@@ -4,7 +4,7 @@ local task_pkg_build(setup) = {
     type: 'pod',
     arch: 'amd64',
     containers: [
-      { image: 'sorintdev/rpmbuild-mugs:0.1' },
+      { image: 'fra.ocir.io/fremyxlx6yog/fedora-fpm:0.1' },
     ],
   },
   working_dir: '/project',
@@ -161,7 +161,7 @@ steps: [
           runtime: {
             type: 'pod',
             architecture: 'amd64',
-            containers: [ { image: 'sorintdev/rpmbuild-mugs:0.1' } ],  
+            containers: [ { image: 'fra.ocir.io/fremyxlx6yog/fedora-fpm:0.1' } ],  
           },         
           steps: [
             { type: 'clone' },
